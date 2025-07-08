@@ -14,7 +14,7 @@ const cors = require('cors');
 dotenv.config();
 
 const app = express()
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3100;
 
 require('./config/passport')(passport);
 
@@ -33,10 +33,7 @@ connectDB();
 
 // middleware
 app
-    .use(function (req, res, next) {
-      res.locals.messages = require('express-messages')(req, res)
-      next()
-    })
+    .use(require('connect-flash')())
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({extended: true}))
     .use(cookieParser())
@@ -61,11 +58,16 @@ app
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
       next();
     })
+    .use((req, res, next) => {
+      res.locals.messages = require('express-messages')(req, res)
+      res.locals.loggedIn = req.user;
+      next()
+    })
     .use(cors({methods: ['GET', 'POST', 'PUT', 'DELETE', 'UPDATE', 'PATCH']}))
     .use(cors({origin: '*'}))
 
-// routes
-  .use(staticFiles)
+    // routes
+    .use(staticFiles)
     .get('/', utilities.handleErrors(baseController.buildHome))
     .use("/auth", require("./routes/authRoute"))
     // 404 - must be last route in list
@@ -75,7 +77,6 @@ app
 
     // error handler middleware
     .use(async (err, req, res) => {
-      let nav = await utilities.getNav()
       console.error(`Error at: "${req.originalUrl}": ${err.status}: ${err.message}`)
       if (err.status === 404) {
         message = err.message
@@ -86,8 +87,7 @@ app
       }
       res.render("errors/error", {
         title: err.status || 'Server Error',
-        message: message,
-        nav
+        message: message
       })
     })
 

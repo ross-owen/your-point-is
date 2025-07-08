@@ -4,14 +4,14 @@ const controller = require('../controllers/authController')
 const utilities = require('../utilities')
 const passport = require('passport')
 
-router.get('/',
+router.get('/login',
     passport.authenticate('google', { scope: ['profile', 'email'] })
 );
 
 router.get('/callback',
     passport.authenticate('google', { failureRedirect: '/' }),
     (req, res) => {
-      res.redirect('/dashboard');
+      res.redirect('/');
     }
 );
 

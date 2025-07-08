@@ -1,9 +1,7 @@
-﻿const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const User = require('../models/User');
-const mongoose = require("mongoose");
+﻿const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const User = require('../models/User'); // Assuming User model is correctly defined
 
-module.exports = function (passport) {
+module.exports = function (passport) { // This 'passport' is the instance passed from server.js
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });
@@ -23,9 +21,6 @@ module.exports = function (passport) {
         callbackURL: '/auth/callback',
       },
       async (accessToken, refreshToken, profile, done) => {
-        console.log(profile);
-        console.log(JSON.stringify(profile));
-
         try {
           let existingUser = await User.findOne({googleId: profile.id});
 
@@ -41,10 +36,7 @@ module.exports = function (passport) {
           }
 
         } catch (err) {
-          console.error(err);
           done(err, null);
         }
       }));
-}
-
-module.exports = passport;
+};

@@ -2,10 +2,8 @@
 require('dotenv').config()
 
 async function buildLogin(req, res) {
-    let nav = await utilities.getNav()
     res.render('auth/login', {
         title: 'Login',
-        nav,
         errors: null,
     })
 }

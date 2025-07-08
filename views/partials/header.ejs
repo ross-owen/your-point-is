@@ -1,12 +1,14 @@
 <header id="top-header">
   <span class="site-name">
-    <a href="/" title="Return to home page">CSE Motors</a>
+    <a href="/" title="Return to home page">Your Point Is</a>
   </span>
     <div id="tools">
       <% if (loggedIn) {%>
-        <a class="a-button" title="Click to log out" href="/account/logout">Logout</a>
+        <span>
+            <span><%=loggedIn.displayName%></span> | <a class="a-button" title="Click to log out" href="/auth/logout">Logout</a>
+        </span>
       <% } else { %>
-        <a class="a-button" title="Click to log in" href="/account/login">Login</a>
+        <a class="a-button" title="Click to log in" href="/auth/login">Login</a>
       <% } %>
     </div>
 </header>
