@@ -11,4 +11,8 @@ Your Point Is? An agile story point estimator for refinements and iteration plan
     - 9 But if it be not right you shall have no such feelings, but you shall have a stupor of thought that shall cause you to forget the thing which is wrong; therefore, you cannot write that which is sacred save it be given you from me.
 
 - Agustín Pariente
+
   - "You can easily judge the character of a man by how he treats those who can do nothing for him."
+
+- Hugo Pariente
+  - "Never let a problem to be solved become more important than a person to be loved" (Monson, 2013)
