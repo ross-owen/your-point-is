@@ -1,0 +1,8 @@
+﻿<!--show the title if exists, otherwise redirect back to the homepage-->
+<% if (title) { %>
+    <h1><%= title %></h1>
+<% } else {
+    res.redirect('/')
+} %>
+
+<%- message %>

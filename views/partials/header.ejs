@@ -1,0 +1,12 @@
+<header id="top-header">
+  <span class="site-name">
+    <a href="/" title="Return to home page">CSE Motors</a>
+  </span>
+    <div id="tools">
+      <% if (loggedIn) {%>
+        <a class="a-button" title="Click to log out" href="/account/logout">Logout</a>
+      <% } else { %>
+        <a class="a-button" title="Click to log in" href="/account/login">Login</a>
+      <% } %>
+    </div>
+</header>

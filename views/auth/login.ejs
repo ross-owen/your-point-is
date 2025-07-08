@@ -1,0 +1,35 @@
+﻿<!--show the title if exists, otherwise redirect back to the homepage-->
+<% if (title) { %>
+    <h1><%= title %></h1>
+<% } else {
+    res.redirect('/')
+} %>
+
+<%- messages() %>
+
+<% if (errors) { %>
+<ul class="notice">
+    <% errors.array().forEach(error => { %>
+    <li><%= error.msg %></li>
+    <% }) %>
+</ul>
+<% } %>
+
+<div class="form-wrapper">
+    <form id="login-form" action="/account/login" method="post">
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email"
+                   value="<%= locals.email %>"
+                   required autofocus>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password"
+                   value="<%= locals.password %>"
+                   required>
+        </div>
+        <button type="submit">Login</button>
+        <div class="login-no-content">No account? <a href="/account/register">Sign-up</a></div>
+    </form>
+</div>
