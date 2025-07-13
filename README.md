@@ -16,3 +16,6 @@ Your Point Is? An agile story point estimator for refinements and iteration plan
 
 - Hugo Pariente
   - "Never let a problem to be solved become more important than a person to be loved" (Monson, 2013)
+
+- Jace Bright
+  - "When it comes to hating, gossiping, ignoring, ridiculing, holding grudges, or wanting to cause harm - stop it!" (Uchtdorf, 2012)  
