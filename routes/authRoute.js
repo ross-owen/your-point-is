@@ -11,14 +11,14 @@ router.get('/login',
 router.get('/callback',
     passport.authenticate('google', { failureRedirect: '/' }),
     (req, res) => {
-      res.redirect('/');
+      res.redirect('/dashboard');
     }
 );
 
 router.get('/logout', (req, res, next) => {
-  req.logout((err) => { // req.logout() is provided by Passport
+  req.logout((err) => {
     if (err) { return next(err); }
-    req.session.destroy(() => { // Optional: destroy the session completely
+    req.session.destroy(() => {
       res.redirect('/');
     });
   });

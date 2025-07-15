@@ -70,6 +70,7 @@ app
     .use(staticFiles)
     .get('/', utilities.handleErrors(baseController.buildHome))
     .use("/auth", require("./routes/authRoute"))
+    .use("/dashboard", require("./routes/dashbaordRoute"))
     // 404 - must be last route in list
     .use(async (req, res, next) => {
       next({status: 404, message: 'Sorry, we appear to have lost that page.'})
