@@ -10,11 +10,25 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const session = require('express-session');
 const cors = require('cors');
+const http = require('http');
+const path = require('path');
+const sharedSession = require('express-socket.io-session');
 
 dotenv.config();
 
 const app = express()
 const port = process.env.PORT || 3100;
+
+const server = http.createServer(app);
+
+const sessionConfig = {
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {maxAge: 24 * 60 * 60 * 1000} // 24 hours
+};
+
+const sessionMiddleware = session(sessionConfig);
 
 require('./config/passport')(passport);
 
@@ -44,12 +58,7 @@ app
     .set('layout', './layouts/layout')
 
     // auth
-    .use(session({
-      secret: process.env.SESSION_SECRET,
-      resave: false,
-      saveUninitialized: false,
-      cookie: {maxAge: 24 * 60 * 60 * 1000} // 24 hours
-    }))
+    .use(sessionMiddleware)
     .use(passport.initialize())
     .use(passport.session())
     .use((req, res, next) => {
@@ -71,6 +80,7 @@ app
     .get('/', utilities.handleErrors(baseController.buildHome))
     .use("/auth", require("./routes/authRoute"))
     .use("/dashboard", require("./routes/dashbaordRoute"))
+    .use("/room", require("./routes/roomRoute"))
     // 404 - must be last route in list
     .use(async (req, res, next) => {
       next({status: 404, message: 'Sorry, we appear to have lost that page.'})
@@ -92,9 +102,11 @@ app
       })
     })
 
-if (require.main === module) {
-  app.listen(port, () => console.log(`Server is running on port ${process.env.HOST}:${port}`));
-}
+const configureSocketIO = require('./config/socket-io')
+configureSocketIO(server, sessionMiddleware);
 
+if (require.main === module) {
+  server.listen(port, () => console.log(`Server is running on port ${process.env.HOST}:${port}`));
+}
 
 module.exports = app;

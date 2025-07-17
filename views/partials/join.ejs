@@ -1,0 +1,25 @@
+<section id="join-section" class="form-wrapper">
+    <h2>Welcome to "Your Point Is?"</h2>
+    <p>Enter your name and click the Join Room button to begin the estimation session</p>
+    <label for="join-name">Name:
+        <input type="text" id="join-name" placeholder="John Smith">
+    </label>
+    <button id="join-button" class="button">Join Room</button>
+</section>
+
+<script>
+  document.getElementById('join-button').addEventListener('click', () => {
+    const name = document.getElementById('join-name').value;
+    if (name) {
+      console.log('Join room name: ' + name);
+      joinRoom(name);
+    }
+  });
+
+  function hideJoin() {
+    const section = document.getElementById('join-section');
+    if (section) {
+      section.style.display = 'none';
+    }
+  }
+</script>
