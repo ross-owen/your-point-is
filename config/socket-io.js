@@ -1,10 +1,10 @@
-const { Server } = require('socket.io');
-const sharedsession = require('express-socket.io-session');
+const { Server } = require("socket.io");
+const sharedSession = require("express-socket.io-session");
 
 /**
  * Configures and initializes Socket.IO for real-time communication.
  * All users are treated as guests. User identification (displayName) is handled
- * when the client emits 'join_room', using sessionID for persistent guest names.
+ * when the client emits "join_room", using sessionID for persistent guest names.
  * @param {object} httpServer The HTTP server instance (created with http.createServer(app)).
  * @param {function} sessionMiddleware The express-session middleware instance. (REQUIRED)
  */
@@ -12,7 +12,7 @@ module.exports = (httpServer, sessionMiddleware) => {
   // Initialize Socket.IO server
   const io = new Server(httpServer, {
     cors: {
-      origin: process.env.CLIENT_URL || "*", // Adjust this to your client's origin in production
+      origin: process.env.CLIENT_URL || "*", // Adjust this to your client"s origin in production
       methods: ["GET", "POST"]
     }
   });
@@ -20,7 +20,7 @@ module.exports = (httpServer, sessionMiddleware) => {
   // 1. Attach express-session to Socket.IO
   // This middleware makes `socket.handshake.session` available,
   // which contains the unique sessionID for each browser.
-  io.use(sharedsession(sessionMiddleware, {
+  io.use(sharedSession(sessionMiddleware, {
     autoSave: true // Allows saving session changes (like new guest display name)
   }));
 
@@ -40,25 +40,25 @@ module.exports = (httpServer, sessionMiddleware) => {
 
 
   // Handle new socket connections
-  io.on('connection', (socket) => {
+  io.on("connection", (socket) => {
     // At this point, we only know the socket.id and sessionID
     console.log(`Socket.IO: Raw connection. Socket ID: ${socket.id}, Session ID: ${socket.handshake.sessionID}`);
 
-    // Handle the 'connect' event (fires on initial connect and any reconnect)
-    socket.on('connect', () => {
+    // Handle the "connect" event (fires on initial connect and any reconnect)
+    socket.on("connect", () => {
       console.log(`Socket.IO: Socket ID ${socket.id} re-connected.`);
     });
 
-    // Handle the 'reconnect' event (fires specifically after a temporary disconnect)
-    socket.on('reconnect', (attemptNumber) => {
+    // Handle the "reconnect" event (fires specifically after a temporary disconnect)
+    socket.on("reconnect", (attemptNumber) => {
       console.log(`Socket.IO: Socket ID ${socket.id} successfully reconnected on attempt #${attemptNumber}.`);
     });
 
 
-    // Listen for the 'join_room' event from the client
-    socket.on('join_room', (roomName, name) => {
-      console.log(`${name} is joinging room ${roomName}`);
-      if (roomName && typeof roomName === 'string' && roomName.trim() !== '') {
+    // Listen for the "join_room" event from the client
+    socket.on("join_room", (roomName, name) => {
+      console.log(`${name} is joining room ${roomName}`);
+      if (roomName && typeof roomName === "string" && roomName.trim() !== "") {
         // --- User Identification Logic (NOW simplified, always guest-like) ---
         const userId = socket.handshake.sessionID; // Session ID is the persistent identifier for this "guest"
         let displayName = name;
@@ -80,7 +80,7 @@ module.exports = (httpServer, sessionMiddleware) => {
         // Add the actual socket to the specified room
         socket.join(roomName);
 
-        // Add the user (by userId/sessionID) to the room's participant list
+        // Add the user (by userId/sessionID) to the room"s participant list
         if (!io.roomParticipants.has(roomName)) {
           io.roomParticipants.set(roomName, new Set());
         }
@@ -89,7 +89,7 @@ module.exports = (httpServer, sessionMiddleware) => {
         console.log(`User "${displayName}" (ID: ${userId}, Socket: ${socket.id}) joined room: "${roomName}"`);
 
         // Send confirmation back to the joining client
-        socket.emit('room_joined_confirmation', `You have joined room: ${roomName}`);
+        socket.emit("room_joined_confirmation", `You have joined room: ${roomName}`);
 
         // Prepare the updated list of participants for this room (using their display names)
         const currentParticipantsInRoom = Array.from(io.roomParticipants.get(roomName)).map(participantId => {
@@ -108,11 +108,10 @@ module.exports = (httpServer, sessionMiddleware) => {
           io.onlineUsers.set(userId, new Set());
         }
         io.onlineUsers.get(userId).add(socket.id);
-        console.log(`Active sockets for User "${displayName}" (ID: ${userId}): ${Array.from(io.onlineUsers.get(userId)).join(', ')}`);
-
+        console.log(`Active sockets for User "${displayName}" (ID: ${userId}): ${Array.from(io.onlineUsers.get(userId)).join(", ")}`);
 
         // Broadcast to all clients in the room (including the sender) about the join
-        io.to(roomName).emit('user_joined', {
+        io.to(roomName).emit("user_joined", {
           message: `${displayName} has joined ${roomName}.`,
           user: { id: userId, displayName: displayName, isAuth: false },
           participants: currentParticipantsInRoom // Send updated participant list
@@ -120,26 +119,26 @@ module.exports = (httpServer, sessionMiddleware) => {
 
       } else {
         console.warn(`Socket ID ${socket.id} tried to join an invalid room name: "${roomName}".`);
-        socket.emit('error_message', 'Invalid room name provided.');
+        socket.emit("error_message", "Invalid room name provided.");
       }
     });
 
-    // Listen for 'chat message' events from the client
-    socket.on('chat message', (data) => {
-      // Check if user data has been set (meaning they've joined a room)
+    // Listen for "chat message" events from the client
+    socket.on("chat message", (data) => {
+      // Check if user data has been set (meaning they"ve joined a room)
       if (!socket.data || !socket.data.userId) {
         console.warn(`Socket ID ${socket.id} sent message before joining a room.`);
-        socket.emit('error_message', 'Please join a room before sending messages.');
+        socket.emit("error_message", "Please join a room before sending messages.");
         return;
       }
 
       const { room, message } = data;
       const { userId, displayName } = socket.data; // Get user data from socket.data
 
-      if (room && message && typeof room === 'string' && typeof message === 'string' && message.trim() !== '') {
+      if (room && message && typeof room === "string" && typeof message === "string" && message.trim() !== "") {
         console.log(`Message to room "${room}" from "${displayName}" (ID: ${userId}, Socket: ${socket.id}): "${message}"`);
         // Emit the message ONLY to clients in that specific room
-        io.to(room).emit('room_message', {
+        io.to(room).emit("room_message", {
           sender: displayName,
           userId: userId, // Include userId for client-side distinctions if needed
           message: message,
@@ -149,19 +148,19 @@ module.exports = (httpServer, sessionMiddleware) => {
         });
       } else {
         console.warn(`Invalid chat message received from "${displayName}" (ID: ${userId}). Data:`, data);
-        socket.emit('error_message', 'Invalid message or room provided.');
+        socket.emit("error_message", "Invalid message or room provided.");
       }
     });
 
     // Handle socket disconnection
-    socket.on('disconnect', (reason) => {
+    socket.on("disconnect", (reason) => {
       // Check if socket.data was ever populated (meaning they joined a room)
       const userId = socket.data?.userId || `unknown_${socket.id}`;
       const displayName = socket.data?.displayName || `Unknown User (${socket.id})`;
 
       console.log(`User "${displayName}" (ID: ${userId}) disconnected. Socket ID: ${socket.id}. Reason: ${reason}`);
 
-      // Remove the disconnected socket ID from the user's active sockets set
+      // Remove the disconnected socket ID from the user"s active sockets set
       if (io.onlineUsers.has(userId)) {
         io.onlineUsers.get(userId).delete(socket.id);
 
@@ -206,7 +205,7 @@ module.exports = (httpServer, sessionMiddleware) => {
                     : [];
 
                 // Broadcast to the room that the user has left
-                io.to(room).emit('user_left', {
+                io.to(room).emit("user_left", {
                   message: `${displayName} has left ${room}.`,
                   user: { id: userId, displayName: displayName, isAuth: false },
                   participants: currentParticipantsInRoom
@@ -219,7 +218,7 @@ module.exports = (httpServer, sessionMiddleware) => {
     });
   });
 
-  console.log('Socket.IO initialized and listening for connections on the HTTP server.');
+  console.log("Socket.IO initialized and listening for connections on the HTTP server.");
 
   return io; // Return the io instance if you need to use it elsewhere
 };

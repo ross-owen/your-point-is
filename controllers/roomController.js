@@ -1,8 +1,19 @@
-﻿require('dotenv').config()
+﻿require("dotenv").config()
+const Room = require("../models/Room");
+
 
 async function buildRoom(req, res) {
   const roomCode = req.params.code;
-  res.render("room/index", {title: "Your Point Is...", roomCode: roomCode})
+  // is this user the owner of the room?
+  let isOwner = false;
+  let displayName = "";
+  if (res.locals.loggedIn) {
+    const room = await Room.findOne({roomCode: roomCode}).exec();
+    isOwner = room.ownerId === res.locals.loggedIn.googleId;
+    displayName = res.locals.loggedIn.displayName;
+  }
+
+  res.render("room/index", {title: "Your Point Is...", roomCode: roomCode, isOwner: isOwner, displayName: displayName});
 }
 
 module.exports = {

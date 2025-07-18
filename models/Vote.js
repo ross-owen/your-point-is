@@ -6,8 +6,8 @@ const mongoose = require('mongoose');
 
 const voteSchema = new mongoose.Schema({
     id: mongoose.Types.ObjectId,
-    room_code: String,
-    session_id: String,
+    roomCode: String,
+    sessionId: String,
     vote: String,
 })
 

@@ -1,5 +1,5 @@
 ﻿require("dotenv").config()
-const Room = require('../models/Room'); // Assuming User model is correctly defined
+const Room = require("../models/Room");
 
 const Util = {}
 
@@ -11,8 +11,8 @@ Util.checkLogin = (req, res, next) => {
   if (res.locals.loggedIn) {
     next()
   } else {
-    req.flash('notice', 'Please log in')
-    return res.redirect('/auth/login')
+    req.flash("notice", "Please log in")
+    return res.redirect("/auth/login")
   }
 }
 
@@ -20,13 +20,13 @@ Util.ensureAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect('/');
+  res.redirect("/");
 };
 
 function roomNotFound(roomCode, next) {
-  console.warn(`Room '${roomCode}' is not found.`);
+  console.warn(`Room "${roomCode}" is not found.`);
 
-  const error = new Error('Room Not Found')
+  const error = new Error("Room Not Found")
   error.status = 404;
 
   return next(error)
@@ -35,10 +35,10 @@ function roomNotFound(roomCode, next) {
 Util.requireRoom = (req, res, next) => {
   const roomCode = req.params.code;
   if (!roomCode) {
-    return roomNotFound('', next);
+    return roomNotFound("", next);
   }
 
-  Room.findOne({code: roomCode})
+  Room.findOne({roomCode: roomCode})
       .then(room => {
         if (room) {
           next();
@@ -47,8 +47,8 @@ Util.requireRoom = (req, res, next) => {
         }
       })
       .catch(err => {
-        console.error('Error finding room:', err);
-        const error = new Error('Database Error while searching for room.');
+        console.error("Error finding room:", err);
+        const error = new Error("Database Error while searching for room.");
         error.status = 500; // Internal Server Error
         return next(error);
       });
