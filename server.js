@@ -57,6 +57,8 @@ app
     .use(expressLayouts)
     .set('layout', './layouts/layout')
 
+    .use(express.static('public'))
+
     // auth
     .use(sessionMiddleware)
     .use(passport.initialize())

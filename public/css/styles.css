@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+
 :root {
   --primary-color: #274c69;
   --secondary-color: #000;
@@ -13,7 +15,15 @@
   box-sizing: border-box;
 }
 
-body {
+body
+{
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: "Jost", sans-serif !important;
+}
+
+/* body {
   font-family: "Montserrat", sans-serif;
   font-size: .7em;
   color: var(--primary-color);
@@ -24,10 +34,10 @@ body {
   padding: 1rem;
   max-width: 900px;
   background-color: var(--subtle-color);
-}
+} */
 
 /* HEADER */
-header {
+/* header {
   padding: 1rem 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -56,10 +66,10 @@ header {
 .a-button {
   color: var(--accent1-color);
   background-color: var(--primary-color);
-}
+} */
 
 /* NAVIGATION */
-nav {
+/* nav {
 }
 
 nav ul {
@@ -84,24 +94,10 @@ nav a {
 nav a:hover {
   color: var(--primary-color);
   background-color: var(--accent1-color);
-}
-
-button {
-  margin: 0 1rem;
-  padding: 0.5rem;
-  background-color: var(--primary-color);
-  color: var(--accent1-color);
-  cursor: pointer;
-  font-size: 1rem;
-  border-radius: 5px;
-}
-button:hover {
-  background-color: var(--accent1-color);
-  color: var(--primary-color);
-}
+} */
 
 /* HERO */
-.hero {
+/* .hero {
   width: 100%;
   margin: 0 auto;
 }
@@ -121,9 +117,9 @@ button:hover {
   width: 100%;
   height: auto;
   padding: 0 5rem;
-}
+} */
 
-.hero-card {
+/* .hero-card {
   padding: 0 0.5rem 0.5rem 0.5rem;
   position: absolute;
   left: 0;
@@ -135,18 +131,29 @@ button:hover {
 }
 .hero-card h2 {
   margin: 0.5rem 0;
-}
+} */
+/* .hero-card button {
+  margin: 0 1rem;
+  padding: 0.5rem;
+  background-color: var(--primary-color);
+  color: var(--accent1-color);
+  cursor: pointer;
+} */
+/* .hero-card button:hover {
+  background-color: var(--accent1-color);
+  color: var(--primary-color);
+} */
 
-.hero-card-details {
+/* .hero-card-details {
   padding-bottom: 0.5rem;
 }
 .hero-card-details span {
   padding: 0.15rem;
   display: block;
 }
-
+ */
 /* DETAILS */
-.details-container {
+/* .details-container {
   display: flex;
   flex-wrap: wrap;
   grid-gap: 1rem;
@@ -268,15 +275,15 @@ button:hover {
   margin-bottom: 1rem;
   width: 100%;
   font-size: 0.9rem;
-}
+} */
 
-.form-wrapper button {
+/* .form-wrapper button {
   margin: 0 auto;
   display: block;
   padding: 0.2rem 0.8rem;
-}
+} */
 
-.login-no-content {
+/* .login-no-content {
   text-align: center;
   padding: 1rem 0 0.5rem;
 }
@@ -334,10 +341,10 @@ button:hover {
 
 #addClassificationForm {
   padding-top: 0.5rem;
-}
+} */
 
 /* FEATURED */
-.featured-wrapper {
+/* .featured-wrapper {
   display: flex;
   row-gap: 1rem;
   flex-direction: column;
@@ -354,12 +361,13 @@ button:hover {
 .feature-available {
   color: var(--backdrop-color);
   text-align: center;
-}
+} */
 
 /* LARGER SCREENS */
-@media (min-width: 565px) {
+/* @media (min-width: 565px) {
   body {
     font-size: unset;
+    background-image: url("/images/site/checkerboard.jpg");
   }
 
   #wrapper {
@@ -430,4 +438,4 @@ button:hover {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
-}
+} */
