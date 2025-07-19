@@ -1,14 +1,13 @@
-<header id="top-header">
-  <span class="site-name">
-    <a href="/" title="Return to home page">Your Point Is</a>
-  </span>
-    <div id="tools">
+<header class="bg-wite py-3 border-bottom shadow-sm">
+  <div class="container d-flex justify-content-between align-items-center">
+      <a href="/" title="Return to home page"><img src="/images/site/logo_your_point_is_3.png" alt="Your Point Is Logo" class="img-fluid" style="max-height: 80px;"></a>
       <% if (loggedIn) {%>
-        <span>
-            <span><%=loggedIn.displayName%></span> | <a class="a-button" title="Click to log out" href="/auth/logout">Logout</a>
-        </span>
-      <% } else { %>
-        <a class="a-button" title="Click to log in" href="/auth/login">Login</a>
-      <% } %>
-    </div>
+      <div>
+        <span class="m-2"><%=loggedIn.displayName%></span>| 
+        <a class="btn btn-outline-danger ms-2" title="Click to log out" href="/auth/logout">Logout</a>
+        <% } else { %>
+        <a class="btn btn-outline-primary" title="Click to log in" href="/auth/login">Login</a>
+        <% } %>
+      </div>
+  </div>
 </header>

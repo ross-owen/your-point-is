@@ -1,18 +1,11 @@
-<h1>Welcome!</h1>
 <%- messages() %>
-<div class="hero">
-    <div class="hero-content">
-        <picture>
-            <source media="(max-width: 564px)" srcset="/images/welcome-sm.webp" type="image/webp">
-            <source media="(min-width: 565px)" srcset="/images/welcome-lg.webp" type="image/webp">
-            <img src="/images/welcome-sm.webp" alt="Your Point Is" />
-        </picture>
-        <div class="hero-card">
-            <h2>Your Point Is</h2>
-            <div class="hero-card-details">
-
-            </div>
-            <button class="call-to-action">Get A Room</button>
-        </div>
-    </div>
+<div class="container position-relative p-0">
+        <img src="/images/site/landing_banner.png" alt="Landing Banner" class="img-fluid rounded w-100 shadow"/>
+        <button class="btn btn-secondary btn-lg position-absolute top-50 end-0 translate-middle-y me-5">Create a Room</button>
+</div>
+<div class="container-lg mt-3 p-5 rounded bg-light shadow-sm border text-center">
+    <h2 class="h1">Estimate Together. Build Better.</h2>
+    <p class="m-1">Join your team in a focused estimation session where every voice counts.</p>
+    <p class="m-1">Collaboratively vote on story effort, align expectations, and drive your Sprint planning with confidence.</p>
+    <button class="btn btn-secondary btn-lg mt-4">Create a Room</button>
 </div>
