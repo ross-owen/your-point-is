@@ -59,17 +59,28 @@ header {
 }
 
 /* NAVIGATION */
-nav {
-}
+.navWrapper {
 
-nav ul {
-  margin: 0;
-  padding: 10px;
-  list-style-type: none;
-  background-color: var(--primary-color);
   display: flex;
-  justify-content: space-around;
+  flex-direction: column;
+  width: 5rem;
+
+  nav {
+    
+    ul {
+      margin: 0;
+      padding: 10px;
+      /* list-style-type: none; */
+      background-color: var(--primary-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+    }
+  }
 }
+/* nav ul {
+  
+} */
 
 nav li {
   display: block;
