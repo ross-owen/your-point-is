@@ -360,7 +360,6 @@ button:hover {
 @media (min-width: 565px) {
   body {
     font-size: unset;
-    background-image: url("/images/site/checkerboard.jpg");
   }
 
   #wrapper {
