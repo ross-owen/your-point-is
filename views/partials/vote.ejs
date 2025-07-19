@@ -1,0 +1,58 @@
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">1</h5>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">2</h5>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">3</h5>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">5</h5>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">8</h5>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">13</h5>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">?</h5>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var cards = document.querySelectorAll(".card").forEach((card) => {card.addEventListener("click", () => {
+    document.querySelectorAll(".card").forEach((a) => {a.classList.remove("selectedCard")})
+    card.classList.add("selectedCard");
+  })} )
+</script>
