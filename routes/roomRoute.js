@@ -4,7 +4,7 @@ const controller = require('../controllers/roomController')
 const utilities = require('../utilities')
 
 
-router.get('/:code', utilities.handleErrors(controller.buildWaitingRoom))
+router.get('/:code', utilities.requireRoom, utilities.handleErrors(controller.buildRoom))
 
 
 module.exports = router

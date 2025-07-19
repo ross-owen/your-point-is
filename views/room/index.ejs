@@ -4,27 +4,22 @@
 
 <script>
   function joinRoom(name) {
-    console.log('Welcome ' + name);
+    console.log("Welcome " + name);
     const roomCode = "<%= roomCode %>";
     if (roomCode) {
       const socket = io();
-      socket.on('connect', () => {
+      socket.on("connect", () => {
         if (roomCode) {
-          socket.emit('join_room', roomCode, name);
+          socket.emit("join_room", roomCode, name);
         }
       });
 
-      socket.on('reconnect', (attemptNumber) => {
+      socket.on("reconnect", (attemptNumber) => {
         console.log(`Successfully reconnected to Socket.IO server on attempt #${attemptNumber}!`);
-        // You might want to display a message to the user here
-        const item = document.createElement('div');
-        item.textContent = `[System]: Reconnected to server.`;
-        messagesDiv.appendChild(item);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        // The 'connect' handler above will handle re-joining the room.
+        // TODO: we may not even need this since `connect` gets fired even with reconnects
       });
 
-      socket.on('room_joined_confirmation', (confirmation) => {
+      socket.on("room_joined_confirmation", (confirmation) => {
         console.log(confirmation);
         hideJoin();
       });
@@ -33,5 +28,5 @@
 </script>
 
 <div class="room">
-    <%- include('../partials/join') %>
+    <%- include("../partials/join") %>
 </div>

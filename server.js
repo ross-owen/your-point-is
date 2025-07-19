@@ -87,7 +87,7 @@ app
     })
 
     // error handler middleware
-    .use(async (err, req, res) => {
+    .use(async (err, req, res, next) => {
       console.error(`Error at: "${req.originalUrl}": ${err.status}: ${err.message}`)
       if (err.status === 404) {
         message = err.message

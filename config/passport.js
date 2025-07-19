@@ -1,7 +1,7 @@
 ﻿const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const User = require('../models/User'); // Assuming User model is correctly defined
+const User = require('../models/User');
 
-module.exports = function (passport) { // This 'passport' is the instance passed from server.js
+module.exports = function (passport) {
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });
