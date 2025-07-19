@@ -1,0 +1,23 @@
+.card {
+  height: 300px;
+  background-color: white;
+}
+.card:hover {
+  background-color: black;
+  color: white;
+}
+
+.card-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-title {
+  user-select: none;
+}
+
+.selectedCard {
+  background-color: black;
+  color: white;
+}
