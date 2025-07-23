@@ -13,7 +13,16 @@ async function buildRoom(req, res) {
     displayName = res.locals.loggedIn.displayName;
   }
 
-  res.render("room/index", {title: "Your Point Is...", roomCode: roomCode, isOwner: isOwner, displayName: displayName});
+  // TODO: replace this with a card deck selection
+  const fibonacci = ['1', '2', '3', '5', '8', '13', '?'];
+
+  res.render("room/index", {
+    title: "Your Point Is...",
+    roomCode: roomCode,
+    isOwner: isOwner,
+    displayName: displayName,
+    cardDeck: fibonacci
+  });
 }
 
 module.exports = {

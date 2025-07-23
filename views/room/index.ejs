@@ -3,11 +3,19 @@
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
+  let socket;
+  function getSocket() {
+    if (!socket) {
+      socket = io();
+    }
+    return socket;
+  }
+  const roomCode = "<%= roomCode %>";
+
   function joinRoom(name) {
-    console.log("Welcome " + name);
-    const roomCode = "<%= roomCode %>";
+
     if (roomCode) {
-      const socket = io();
+      socket = getSocket();
       socket.on("connect", () => {
         if (roomCode) {
           socket.emit("join_room", roomCode, name);
@@ -22,6 +30,14 @@
       socket.on("room_joined_confirmation", (confirmation) => {
         console.log(confirmation);
         hideJoin();
+
+        // TODO: show waiting room
+      });
+
+      socket.on("started_new_round", () => {
+        console.log('Received new round request');
+
+        // TODO: send back to vote view
       });
     }
   }
@@ -29,4 +45,5 @@
 
 <div class="room">
     <%- include("../partials/join") %>
+    <%- include("../partials/voted") %>
 </div>
