@@ -1,0 +1,177 @@
+<section id="voted-section" class="form-wrapper hidden">
+    <h2>All votes are in: <span id="average-vote"></span></h2>
+    <div id="cards-wrapper" class="row row-cols-1 row-cols-md-3 g-4 hidden">
+    <% for (let i = 0; i < cardDeck.length; i++) { %>
+        <div id="card-<%= cardDeck[i] %>" class="col card-wrapper hidden">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title"><%= cardDeck[i] %></h2>
+                </div>
+            </div>
+            <div id="card-vote-<%= cardDeck[i] %>" class="vote-count"></div>
+        </div>
+    <% } %>
+    </div>
+
+    <% if (isOwner) { %>
+        <button id="new-round-button" class="btn btn-secondary btn-lg mt-4">Start a New Round</button>
+    <% } %>
+</section>
+
+<script>
+  const newRoundButton = document.getElementById('new-round-button');
+  if (newRoundButton) {
+    newRoundButton.addEventListener("click", () => {
+      newRound();
+    });
+  }
+
+  function showVoted(votes) {
+
+    resetCards();
+
+    countCards(votes);
+
+    const section = document.getElementById("voted-section");
+    if (section) {
+      section.classList.remove("hidden");
+    }
+  }
+
+  function hideVoted() {
+    resetCards();
+
+    const section = document.getElementById("join-section");
+    if (section) {
+      section.classList.add("hidden");
+    }
+  }
+
+  function resetCards() {
+    const voteCounts = document.querySelectorAll(".vote-count");
+    voteCounts.forEach(element => {
+      element.innerHTML = "";
+    });
+    const cards = document.querySelectorAll(".card-wrapper");
+    cards.forEach(element => {
+      element.classList.add("hidden");
+    });
+    document.getElementById("cards-wrapper").classList.add("hidden");
+    document.getElementById("average-vote").innerHTML = "";
+  }
+
+  function countCards(voteCounts) {
+    const cardVoteSummary = {};
+
+    voteCounts.forEach(vote => {
+      if (!cardVoteSummary[vote.card]) {
+        cardVoteSummary[vote.card] = {
+          count: 0,
+          names: [],
+        };
+      }
+
+      cardVoteSummary[vote.card].count++;
+      cardVoteSummary[vote.card].names.push(vote.name);
+    });
+
+    let sum = 0;
+    let voterCount = 0;
+
+    for (const card in cardVoteSummary) {
+      if (cardVoteSummary.hasOwnProperty(card)) {
+        const summary = cardVoteSummary[card];
+
+        const cardId = `card-${card}`;
+        document.getElementById(cardId).classList.remove("hidden");
+
+        const cardVoteId = `card-vote-${card}`;
+        const voteSummary = document.getElementById(cardVoteId);
+
+        const namesString = summary.names.join(', ');
+
+        // Set the innerHTML
+        voteSummary.innerHTML = `
+            Total Votes: ${summary.count}<br>
+            By: ${namesString}
+          `;
+
+        if (!isNaN(card)) {
+          sum += (Number(card) * summary.count);
+          voterCount += summary.count;
+        }
+      }
+    }
+
+    document.getElementById("cards-wrapper").classList.remove("hidden");
+    document.getElementById("average-vote").innerHTML = `${(sum / voterCount)}`;
+  }
+
+  function newRound() {
+    hideVoted();
+    console.log('submitting socket.io for a new round');
+    getSocket().emit("new_round", roomCode);
+  }
+
+  function getVoteData() {
+    // TEST DATA
+    // TODO: get real data
+    return [
+      {
+        card: '1',
+        name: 'Ross'
+      },
+      {
+        card: '3',
+        name: 'Curtis'
+      },
+      {
+        card: '5',
+        name: 'Nate'
+      },
+      {
+        card: '2',
+        name: 'Mikhail'
+      },
+      {
+        card: '3',
+        name: 'Chris'
+      },
+      {
+        card: '?',
+        name: 'Kevin'
+      }
+    ];
+  }
+  function getVoteData2() {
+    // TEST DATA
+    // TODO: get real data
+    return [
+      {
+        card: '3',
+        name: 'Ross'
+      },
+      {
+        card: '2',
+        name: 'Curtis'
+      },
+      {
+        card: '?',
+        name: 'Nate'
+      },
+      {
+        card: '2',
+        name: 'Mikhail'
+      },
+      {
+        card: '3',
+        name: 'Chris'
+      },
+      {
+        card: '1',
+        name: 'Kevin'
+      }
+    ];
+  }
+
+</script>

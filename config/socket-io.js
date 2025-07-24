@@ -1,4 +1,4 @@
-const { Server } = require("socket.io");
+const {Server} = require("socket.io");
 const sharedSession = require("express-socket.io-session");
 
 /**
@@ -113,7 +113,7 @@ module.exports = (httpServer, sessionMiddleware) => {
         // Broadcast to all clients in the room (including the sender) about the join
         io.to(roomName).emit("user_joined", {
           message: `${displayName} has joined ${roomName}.`,
-          user: { id: userId, displayName: displayName, isAuth: false },
+          user: {id: userId, displayName: displayName, isAuth: false},
           participants: currentParticipantsInRoom // Send updated participant list
         });
 
@@ -123,33 +123,21 @@ module.exports = (httpServer, sessionMiddleware) => {
       }
     });
 
-    // Listen for "chat message" events from the client
-    socket.on("chat message", (data) => {
-      // Check if user data has been set (meaning they"ve joined a room)
-      if (!socket.data || !socket.data.userId) {
-        console.warn(`Socket ID ${socket.id} sent message before joining a room.`);
-        socket.emit("error_message", "Please join a room before sending messages.");
-        return;
-      }
+    // listen for a new round request from the room owner
+    socket.on("new_round", (room) => {
 
-      const { room, message } = data;
-      const { userId, displayName } = socket.data; // Get user data from socket.data
+      const {userId, displayName} = socket.data;
 
-      if (room && message && typeof room === "string" && typeof message === "string" && message.trim() !== "") {
-        console.log(`Message to room "${room}" from "${displayName}" (ID: ${userId}, Socket: ${socket.id}): "${message}"`);
-        // Emit the message ONLY to clients in that specific room
-        io.to(room).emit("room_message", {
-          sender: displayName,
-          userId: userId, // Include userId for client-side distinctions if needed
-          message: message,
-          room: room,
-          timestamp: Date.now(), // Add timestamp for client-side ordering
-          isAuth: false // Always false
-        });
-      } else {
-        console.warn(`Invalid chat message received from "${displayName}" (ID: ${userId}). Data:`, data);
-        socket.emit("error_message", "Invalid message or room provided.");
-      }
+      console.log(`user ${userId} (${displayName}) requested a new round.`);
+      console.log(`room ${room}`);
+
+      console.log(`Start a new round message to room "${room}" from "${displayName}" (ID: ${userId}, Socket: ${socket.id})"`);
+      // Emit the message ONLY to clients in that specific room
+      io.to(room).emit("started_new_round", {
+        sender: displayName,
+        userId: userId,
+        room: room
+      });
     });
 
     // Handle socket disconnection
@@ -207,7 +195,7 @@ module.exports = (httpServer, sessionMiddleware) => {
                 // Broadcast to the room that the user has left
                 io.to(room).emit("user_left", {
                   message: `${displayName} has left ${room}.`,
-                  user: { id: userId, displayName: displayName, isAuth: false },
+                  user: {id: userId, displayName: displayName, isAuth: false},
                   participants: currentParticipantsInRoom
                 });
               }

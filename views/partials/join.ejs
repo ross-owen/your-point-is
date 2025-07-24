@@ -5,17 +5,19 @@
         <h2>Welcome to the room</h2>
     <% } %>
     <p>Enter your name and click the Join Room button to begin the estimation session</p>
+    <div>
     <label for="join-name">Name:
         <input type="text" id="join-name" placeholder="John Smith" value="<%= displayName %>">
     </label>
-    <button id="join-button" class="button">Join Room</button>
+    </div>
+    <button id="join-button" class="btn btn-secondary btn-lg mt-4">Join Room</button>
 </section>
 
 <script>
   document.getElementById("join-button").addEventListener("click", () => {
     const name = document.getElementById("join-name").value;
     if (name) {
-      console.log("Join room name: " + name);
+      console.log(`${name} is joining room <%= roomCode %>`);
       joinRoom(name);
     }
   });
