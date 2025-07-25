@@ -1,13 +1,44 @@
-<header class="bg-wite py-3 border-bottom shadow-sm">
-  <div class="container d-flex justify-content-between align-items-center">
-      <a href="/" title="Return to home page"><img src="/images/site/logo_your_point_is_3.png" alt="Your Point Is Logo" class="img-fluid" style="max-height: 80px;"></a>
+<!-- <header class="bg-wite py-3 border-bottom shadow-sm"> -->
+  <div class="wrapper">
+  <!-- <div class="container d-flex justify-content-between align-items-center"> -->
+    <aside id="sidebar">
+      <div class="d-flex">
+        <button id="toggle-btn" type="button">
+          <i class="fa fa-bars"></i>
+        </button>
+
+          <div class="sidebar-logo">
+          <a href="/" title="Return to home page">
+            <img src="/images/site/logo_your_point_is_3.png" alt="Your Point Is Logo" class="img-fluid" style="max-height: 80px;"></a>
+          </div>
+      </div>
+          <ul class="sidebar-nav"></ul>
       <% if (loggedIn) {%>
+        
+          <li class="sidebar-item">
+            <a href="/dashboard" class="sidebar-link">
+            <i class="fa-solid fa-house-user"></i>
+            <span>Dashboard</span>
+          </li>
+          <li class="sidebar-item"><span class="m-2">
+            <%=loggedIn.displayName%></span>
+          </li>
+        </ul>
       <div>
-        <span class="m-2"><%=loggedIn.displayName%></span>| 
+        
         <a class="btn btn-outline-danger ms-2" title="Click to log out" href="/auth/logout">Logout</a>
         <% } else { %>
+          <li class="sidebar-item">
+            <a href="#" class="sidebar-link">
+            <i class="fa-solid fa-door-open"></i>
+            <span>Join a Room</span>
+          </li>
+        </ul>
         <a class="btn btn-outline-primary" title="Click to log in" href="/auth/login">Login</a>
         <% } %>
+      
+      </aside>
       </div>
+  <!-- </div> -->
   </div>
-</header>
+<!-- </header> -->

@@ -21,6 +21,43 @@ body
   padding: 0;
   overflow-x: hidden;
   font-family: "Jost", sans-serif !important;
+
+}
+
+
+a {
+  text-decoration: none;
+}
+
+li {
+  list-style: none;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  transition: all 0.35s ease-in-out;
+}
+
+#sidebar {
+  width: 70px;
+  min-width: 70px;
+  z-index: 1000;
+  transition: all .25s ease-in-out;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 565px) {
+  #toggle-btn {
+    display: none;
+  }
 }
 
 /* body {
