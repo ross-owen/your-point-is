@@ -1,47 +1,26 @@
 const {Server} = require("socket.io");
 const sharedSession = require("express-socket.io-session");
 
-/**
- * Configures and initializes Socket.IO for real-time communication.
- * All users are treated as guests. User identification (displayName) is handled
- * when the client emits "join_room", using sessionID for persistent guest names.
- * @param {object} httpServer The HTTP server instance (created with http.createServer(app)).
- * @param {function} sessionMiddleware The express-session middleware instance. (REQUIRED)
- */
 module.exports = (httpServer, sessionMiddleware) => {
-  // Initialize Socket.IO server
   const io = new Server(httpServer, {
     cors: {
-      origin: process.env.CLIENT_URL || "*", // Adjust this to your client"s origin in production
+      origin: process.env.CLIENT_URL || "*",
       methods: ["GET", "POST"]
     }
   });
 
-  // 1. Attach express-session to Socket.IO
-  // This middleware makes `socket.handshake.session` available,
-  // which contains the unique sessionID for each browser.
   io.use(sharedSession(sessionMiddleware, {
-    autoSave: true // Allows saving session changes (like new guest display name)
+    autoSave: true
   }));
 
-  // --- Global In-Memory Data Stores ---
-  // These maps will track users based on their sessionID.
-  // In a production environment, use a persistent store (e.g., Redis)
-  // for `io.onlineUsers` and `io.roomParticipants` to share state across multiple server instances.
-
-  // Map to track all active Sockets for each unique User ID (userId -> Set<socket.id>)
   if (!io.onlineUsers) {
     io.onlineUsers = new Map();
   }
-  // Map to track which Users (by userId) are in which Rooms (roomName -> Set<userId>)
   if (!io.roomParticipants) {
     io.roomParticipants = new Map();
   }
 
-
-  // Handle new socket connections
   io.on("connection", (socket) => {
-    // At this point, we only know the socket.id and sessionID
     console.log(`Socket.IO: Raw connection. Socket ID: ${socket.id}, Session ID: ${socket.handshake.sessionID}`);
 
     // Handle the "connect" event (fires on initial connect and any reconnect)
@@ -53,7 +32,6 @@ module.exports = (httpServer, sessionMiddleware) => {
     socket.on("reconnect", (attemptNumber) => {
       console.log(`Socket.IO: Socket ID ${socket.id} successfully reconnected on attempt #${attemptNumber}.`);
     });
-
 
     // Listen for the "join_room" event from the client
     socket.on("join_room", (roomName, name) => {
@@ -128,9 +106,6 @@ module.exports = (httpServer, sessionMiddleware) => {
 
       const {userId, displayName} = socket.data;
 
-      console.log(`user ${userId} (${displayName}) requested a new round.`);
-      console.log(`room ${room}`);
-
       console.log(`Start a new round message to room "${room}" from "${displayName}" (ID: ${userId}, Socket: ${socket.id})"`);
       // Emit the message ONLY to clients in that specific room
       io.to(room).emit("started_new_round", {
@@ -140,13 +115,67 @@ module.exports = (httpServer, sessionMiddleware) => {
       });
     });
 
+    // listen for voting
+    socket.on("voting", (data) => {
+
+      const {room, vote} = data;
+      const {userId, displayName} = socket.data;
+      const sessionId = socket.handshake.sessionID;
+
+      console.log(`${displayName} voted a ${vote} in room ${room} using session ${sessionId} and userId ${userId}"`);
+      // TODO write to the database
+    });
+
+    // listen for collect votes
+    socket.on("collect_votes", (room) => {
+
+      console.log(
+          `Collecting votes for room "${room}"`
+      );
+      // TODO: call db to get the votes for the room
+      const votes = [
+        {
+          card: '1',
+          name: 'Ross'
+        },
+        {
+          card: '3',
+          name: 'Curtis'
+        },
+        {
+          card: '5',
+          name: 'Nate'
+        },
+        {
+          card: '2',
+          name: 'Mikhail'
+        },
+        {
+          card: '3',
+          name: 'Chris'
+        },
+        {
+          card: '?',
+          name: 'Kevin'
+        }
+      ];
+
+      io.to(room).emit("voted", votes);
+    });
+
     // Handle socket disconnection
     socket.on("disconnect", (reason) => {
       // Check if socket.data was ever populated (meaning they joined a room)
-      const userId = socket.data?.userId || `unknown_${socket.id}`;
-      const displayName = socket.data?.displayName || `Unknown User (${socket.id})`;
+      const userId = socket.data?.userId ||
+          `unknown_${socket.id}`
+      ;
+      const displayName = socket.data?.displayName ||
+          `Unknown User (${socket.id})`
+      ;
 
-      console.log(`User "${displayName}" (ID: ${userId}) disconnected. Socket ID: ${socket.id}. Reason: ${reason}`);
+      console.log(
+          `User "${displayName}" (ID: ${userId}) disconnected. Socket ID: ${socket.id}. Reason: ${reason}`
+      );
 
       // Remove the disconnected socket ID from the user"s active sockets set
       if (io.onlineUsers.has(userId)) {
@@ -155,7 +184,9 @@ module.exports = (httpServer, sessionMiddleware) => {
         // If the user has no more active sockets, consider them fully offline
         if (io.onlineUsers.get(userId).size === 0) {
           io.onlineUsers.delete(userId);
-          console.log(`User "${displayName}" (ID: ${userId}) is now fully offline.`);
+          console.log(
+              `User "${displayName}" (ID: ${userId}) is now fully offline.`
+          );
 
           // Iterate through all rooms the disconnected socket *was* in
           socket.rooms.forEach(room => {
@@ -178,7 +209,9 @@ module.exports = (httpServer, sessionMiddleware) => {
                 if (io.roomParticipants.get(room).size === 0) {
                   io.roomParticipants.delete(room);
                 }
-                console.log(`User "${displayName}" (ID: ${userId}) removed from room "${room}" participants.`);
+                console.log(
+                    `User "${displayName}" (ID: ${userId}) removed from room "${room}" participants.`
+                );
 
                 // Prepare the updated list of participants for this room
                 const currentParticipantsInRoom = io.roomParticipants.has(room)
@@ -194,7 +227,9 @@ module.exports = (httpServer, sessionMiddleware) => {
 
                 // Broadcast to the room that the user has left
                 io.to(room).emit("user_left", {
-                  message: `${displayName} has left ${room}.`,
+                  message:
+                      `${displayName} has left ${room}.`
+                  ,
                   user: {id: userId, displayName: displayName, isAuth: false},
                   participants: currentParticipantsInRoom
                 });

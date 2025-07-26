@@ -21,3 +21,14 @@
   background-color: black;
   color: white;
 }
+
+
+/* this will go away once we do the pie chart */
+.voted-card {
+  height: 300px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
