@@ -2,7 +2,15 @@
 const Room = require('../models/Room');
 
 async function buildDashboard(req, res) {
-  res.render('dashboard/index', { title: 'Dashboard' });
+  const userName = req.user.displayName || 'Guest';
+  res.render('dashboard/index', { title: 'Dashboard', userName: userName });
+}
+
+async function getUserRooms(req, res)
+{
+  const userId = req.user.id;
+  const rooms = await Room.find({ ownerId: userId }).sort({ _id: -1});
+  res.json(rooms);
 }
 
 async function createRoom(req, res) {
@@ -13,11 +21,9 @@ async function createRoom(req, res) {
       room_code = Math.random().toString(36).substring(2, 7);
       codeFoundInDb = await validateCode(room_code);
     }
-
     const newRoom = new Room({
-      room_code: room_code,
-      host_name: req.user.displayName,
-      host_socket_id: '',
+      roomCode: room_code,
+      ownerId: req.user.id,
       guests: [],
     });
     await newRoom.save();
@@ -39,4 +45,5 @@ async function validateCode(code) {
 module.exports = {
   buildDashboard,
   createRoom,
+  getUserRooms
 };

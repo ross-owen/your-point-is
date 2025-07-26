@@ -1,4 +1,36 @@
-<h1><%= title %></h1>
-<%- messages() %>
-<div class="dashbaord">
+<div class="container mt-5">
+    <h1 class="display-4 mb-4 text-center"><%= title %></h1>
+    <%- messages() %>
+    <div class="border rounded shadow-sm p-4 mx-auto dashboard">
+        <h2 class="h5 mb-1 fw-semibold">Hi <%= userName %></h2>
+        <h3 class="h6 text-muted mb-3">Your Rooms</h3>
+        <ul class="list-group list-gruop-flush">
+        </ul>
+    </div>
 </div>
+
+<script>
+    fetch('/dashboard/api/rooms')
+        .then(res => res.json())
+        .then(data => {
+            const roomsUl = document.querySelector('.dashboard ul');
+            roomsUl.innerHTML = '';
+            if (data.length > 0) {
+                data.forEach( room => {
+                    const li = document.createElement('li');
+                    li.className = "list-group";
+                    const roomLink = document.createElement('a');
+                    roomLink.href = `/room?${room.roomCode}`;
+                    roomLink.className = "room-link text-decoration-none list-group-item list-group-item-action w-100 d-flex justify-content-between align-items-center";
+                    roomLink.textContent =  room.roomCode;
+                    roomLink.appendChild(li);
+                    roomsUl.appendChild(roomLink);
+                })
+            } else {
+                const li = document.createElement('li');
+                li.className = "list-group-item text-center text-muted";
+                li.textContent = 'No rooms found';
+                roomsUl.appendChild(li);
+            }
+        })
+</script>

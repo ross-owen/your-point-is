@@ -1,11 +1,14 @@
 <%- messages() %>
 <div class="container position-relative p-0">
         <img src="/images/site/landing_banner.png" alt="Landing Banner" class="img-fluid rounded w-100 shadow"/>
-        <button class="btn btn-secondary btn-lg position-absolute top-50 end-0 translate-middle-y me-5">Create a Room</button>
+        <!--<button class="btn btn-secondary btn-lg position-absolute top-50 end-0 translate-middle-y me-5">Create a Room</button>-->
 </div>
 <div class="container-lg mt-3 p-5 rounded bg-light shadow-sm border text-center">
     <h2 class="h1">Estimate Together. Build Better.</h2>
     <p class="m-1">Join your team in a focused estimation session where every voice counts.</p>
     <p class="m-1">Collaboratively vote on story effort, align expectations, and drive your Sprint planning with confidence.</p>
-    <button class="btn btn-secondary btn-lg mt-4">Create a Room</button>
+    <form action="/dashboard/" method="POST">
+        <button type="submit" class="btn btn-secondary btn-lg mt-4">Create a Room</button>
+    </form>
+    
 </div>
