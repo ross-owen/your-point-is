@@ -11,7 +11,6 @@
     return socket;
   }
   const roomCode = "<%= roomCode %>";
-
   function joinRoom(name) {
 
     if (roomCode) {
@@ -32,12 +31,17 @@
         hideJoin();
 
         // TODO: show waiting room
+        showVote();
       });
 
       socket.on("started_new_round", () => {
-        console.log('Received new round request');
+        hideVoted();
+        showVote();
+      });
 
-        // TODO: send back to vote view
+      socket.on("voted", async (votes) => {
+        hideVote();
+        showVoted(votes);
       });
     }
   }
@@ -45,5 +49,6 @@
 
 <div class="room">
     <%- include("../partials/join") %>
+    <%- include("../partials/vote") %>
     <%- include("../partials/voted") %>
 </div>

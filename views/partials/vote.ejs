@@ -1,58 +1,60 @@
-<div class="row row-cols-1 row-cols-md-3 g-4">
-  <div class="col">
-    <div class="card">
-      <div class="card-body">
-        <h2 class="card-title">1</h5>
-      </div>
+<section id="vote-section" class="hidden">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <% cardDeck.forEach((c) => { %>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title"><%= c %></h2>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
     </div>
-  </div>
-  <div class="col">
-    <div class="card">
-      <div class="card-body">
-        <h2 class="card-title">2</h5>
-      </div>
-    </div>
-  </div>
-  <div class="col">
-    <div class="card">
-      <div class="card-body">
-        <h2 class="card-title">3</h5>
-      </div>
-    </div>
-  </div>
-  <div class="col">
-    <div class="card">
-      <div class="card-body">
-        <h2 class="card-title">5</h5>
-      </div>
-    </div>
-  </div>
-  <div class="col">
-    <div class="card">
-      <div class="card-body">
-        <h2 class="card-title">8</h5>
-      </div>
-    </div>
-  </div>
-  <div class="col">
-    <div class="card">
-      <div class="card-body">
-        <h2 class="card-title">13</h5>
-      </div>
-    </div>
-  </div>
-  <div class="col">
-    <div class="card">
-      <div class="card-body">
-        <h2 class="card-title">?</h5>
-      </div>
-    </div>
-  </div>
-</div>
+
+    <% if (isOwner) { %>
+        <div class="owner-button">
+            <button id="collect-votes" class="btn btn-secondary btn-lg mt-4">Your Point Is?</button>
+        </div>
+    <% } %>
+</section>
 
 <script>
-  var cards = document.querySelectorAll(".card").forEach((card) => {card.addEventListener("click", () => {
-    document.querySelectorAll(".card").forEach((a) => {a.classList.remove("selectedCard")})
-    card.classList.add("selectedCard");
-  })} )
+  const cards = document.querySelectorAll(".card");
+
+  cards.forEach((card) => {
+    card.addEventListener("click", () => {
+      resetCards();
+
+      card.classList.add("selectedCard");
+      const vote = card.querySelector(".card-title").textContent;
+      console.log(`selected: ${vote}`);
+      getSocket().emit("voting", { room: roomCode, vote: vote });
+    });
+  });
+
+  const collectVotesButton = document.getElementById("collect-votes");
+  if (collectVotesButton) {
+    collectVotesButton.addEventListener("click", () => {
+      collectVotes();
+    });
+  }
+
+  function showVote() {
+    resetCards();
+    document.getElementById("vote-section").classList.remove("hidden");
+  }
+
+  function hideVote() {
+    document.getElementById("vote-section").classList.add("hidden");
+  }
+
+  function resetCards() {
+    cards.forEach((c) => c.classList.remove("selectedCard"));
+  }
+
+  function collectVotes() {
+    hideVote();
+    console.log('collecting votes with socket.io')
+    getSocket().emit("collect_votes", roomCode);
+  }
 </script>
