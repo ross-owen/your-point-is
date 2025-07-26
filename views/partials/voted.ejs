@@ -1,20 +1,22 @@
-<section id="voted-section" class="form-wrapper hidden">
-    <h2>All votes are in: <span id="average-vote"></span></h2>
-    <div id="cards-wrapper" class="row row-cols-1 row-cols-md-3 g-4 hidden">
-    <% for (let i = 0; i < cardDeck.length; i++) { %>
-        <div id="card-<%= cardDeck[i] %>" class="col card-wrapper hidden">
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="card-title"><%= cardDeck[i] %></h2>
+<section id="voted-section" class="hidden">
+    <h2>All votes are in for an average of: <span id="average-vote"></span></h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <% for (let i = 0; i < cardDeck.length; i++) { %>
+            <div id="voted-card-<%= cardDeck[i] %>" class="col voted-card-wrapper hidden">
+                <div class="voted-card">
+                    <div class="voted-card-body">
+                        <h2 class="voted-card-title"><%= cardDeck[i] %></h2>
+                    </div>
                 </div>
+                <div id="voted-card-summary-<%= cardDeck[i] %>" class="vote-count"></div>
             </div>
-            <div id="card-vote-<%= cardDeck[i] %>" class="vote-count"></div>
-        </div>
-    <% } %>
+        <% } %>
     </div>
 
     <% if (isOwner) { %>
-        <button id="new-round-button" class="btn btn-secondary btn-lg mt-4">Start a New Round</button>
+        <div class="owner-button">
+            <button id="new-round-button" class="btn btn-secondary btn-lg mt-4">Start a New Round</button>
+        </div>
     <% } %>
 </section>
 
@@ -28,7 +30,7 @@
 
   function showVoted(votes) {
 
-    resetCards();
+    resetVotedCards();
 
     countCards(votes);
 
@@ -39,24 +41,23 @@
   }
 
   function hideVoted() {
-    resetCards();
+    resetVotedCards();
 
-    const section = document.getElementById("join-section");
+    const section = document.getElementById("voted-section");
     if (section) {
       section.classList.add("hidden");
     }
   }
 
-  function resetCards() {
+  function resetVotedCards() {
     const voteCounts = document.querySelectorAll(".vote-count");
     voteCounts.forEach(element => {
       element.innerHTML = "";
     });
-    const cards = document.querySelectorAll(".card-wrapper");
+    const cards = document.querySelectorAll(".voted-card-wrapper");
     cards.forEach(element => {
       element.classList.add("hidden");
     });
-    document.getElementById("cards-wrapper").classList.add("hidden");
     document.getElementById("average-vote").innerHTML = "";
   }
 
@@ -82,15 +83,14 @@
       if (cardVoteSummary.hasOwnProperty(card)) {
         const summary = cardVoteSummary[card];
 
-        const cardId = `card-${card}`;
+        const cardId = `voted-card-${card}`;
         document.getElementById(cardId).classList.remove("hidden");
 
-        const cardVoteId = `card-vote-${card}`;
+        const cardVoteId = `voted-card-summary-${card}`;
         const voteSummary = document.getElementById(cardVoteId);
 
         const namesString = summary.names.join(', ');
 
-        // Set the innerHTML
         voteSummary.innerHTML = `
             Total Votes: ${summary.count}<br>
             By: ${namesString}
@@ -103,7 +103,6 @@
       }
     }
 
-    document.getElementById("cards-wrapper").classList.remove("hidden");
     document.getElementById("average-vote").innerHTML = `${(sum / voterCount)}`;
   }
 
@@ -112,66 +111,4 @@
     console.log('submitting socket.io for a new round');
     getSocket().emit("new_round", roomCode);
   }
-
-  function getVoteData() {
-    // TEST DATA
-    // TODO: get real data
-    return [
-      {
-        card: '1',
-        name: 'Ross'
-      },
-      {
-        card: '3',
-        name: 'Curtis'
-      },
-      {
-        card: '5',
-        name: 'Nate'
-      },
-      {
-        card: '2',
-        name: 'Mikhail'
-      },
-      {
-        card: '3',
-        name: 'Chris'
-      },
-      {
-        card: '?',
-        name: 'Kevin'
-      }
-    ];
-  }
-  function getVoteData2() {
-    // TEST DATA
-    // TODO: get real data
-    return [
-      {
-        card: '3',
-        name: 'Ross'
-      },
-      {
-        card: '2',
-        name: 'Curtis'
-      },
-      {
-        card: '?',
-        name: 'Nate'
-      },
-      {
-        card: '2',
-        name: 'Mikhail'
-      },
-      {
-        card: '3',
-        name: 'Chris'
-      },
-      {
-        card: '1',
-        name: 'Kevin'
-      }
-    ];
-  }
-
 </script>

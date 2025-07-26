@@ -1,14 +1,26 @@
 const mongoose = require('mongoose');
 
-// The schema includes a unique Id for identifying, the session id of the 
-// voter, and the room code
-// The vote is a string because there could be a question mark
-
 const voteSchema = new mongoose.Schema({
-    id: mongoose.Types.ObjectId,
-    roomCode: String,
-    sessionId: String,
-    vote: String,
-})
+    roomCode: {
+        type: String,
+        required: true
+    },
+    sessionId: {
+        type: String,
+        required: true
+    },
+    displayName: {
+        type: String,
+        required: true
+    },
+    vote: {
+        type: String,
+        required: true
+    }
+});
 
-module.exports = mongoose.model('Vote', voteSchema);
+voteSchema.index({roomCode: 1, sessionId: 1}, {unique: true});
+
+const Vote = mongoose.model('Vote', voteSchema);
+
+module.exports = Vote;
