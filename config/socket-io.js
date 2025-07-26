@@ -1,5 +1,6 @@
 const {Server} = require("socket.io");
 const sharedSession = require("express-socket.io-session");
+const Vote = require('../models/Vote');
 
 module.exports = (httpServer, sessionMiddleware) => {
   const io = new Server(httpServer, {
@@ -116,50 +117,24 @@ module.exports = (httpServer, sessionMiddleware) => {
     });
 
     // listen for voting
-    socket.on("voting", (data) => {
+    socket.on("voting", async (data) => {
 
       const {room, vote} = data;
       const {userId, displayName} = socket.data;
       const sessionId = socket.handshake.sessionID;
 
       console.log(`${displayName} voted a ${vote} in room ${room} using session ${sessionId} and userId ${userId}"`);
-      // TODO write to the database
+      await saveVote(room, sessionId, displayName, vote);
     });
 
     // listen for collect votes
-    socket.on("collect_votes", (room) => {
+    socket.on("collect_votes", async (room) => {
 
       console.log(
           `Collecting votes for room "${room}"`
       );
-      // TODO: call db to get the votes for the room
-      const votes = [
-        {
-          card: '1',
-          name: 'Ross'
-        },
-        {
-          card: '3',
-          name: 'Curtis'
-        },
-        {
-          card: '5',
-          name: 'Nate'
-        },
-        {
-          card: '2',
-          name: 'Mikhail'
-        },
-        {
-          card: '3',
-          name: 'Chris'
-        },
-        {
-          card: '?',
-          name: 'Kevin'
-        }
-      ];
-
+      const votes = await getVotes(room);
+      console.log(votes);
       io.to(room).emit("voted", votes);
     });
 
@@ -245,3 +220,32 @@ module.exports = (httpServer, sessionMiddleware) => {
 
   return io; // Return the io instance if you need to use it elsewhere
 };
+
+async function saveVote(roomCode, sessionId, displayName, vote) {
+  await Vote.findOneAndUpdate(
+      {
+        roomCode: roomCode,
+        sessionId: sessionId,
+      },
+      {
+        vote: vote,
+        displayName: displayName,
+      },
+      {
+        new: true,
+        upsert: true,
+        runValidators: true
+      }
+  );
+}
+
+async function getVotes(roomCode) {
+  const votes = await Vote.find({roomCode: roomCode});
+  await Vote.deleteMany({ roomCode: roomCode });
+  return votes.map(v => {
+    return {
+      name: v.displayName,
+      card: v.vote
+    }
+  });
+}

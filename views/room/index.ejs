@@ -31,14 +31,16 @@
         hideJoin();
 
         // TODO: show waiting room
+        showVote();
       });
 
       socket.on("started_new_round", () => {
-        console.log('Received new round request');
+        hideVoted();
         showVote();
       });
 
       socket.on("voted", async (votes) => {
+        hideVote();
         showVoted(votes);
       });
     }
