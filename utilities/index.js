@@ -20,7 +20,7 @@ Util.ensureAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect("/");
+  res.redirect("/auth/login");
 };
 
 function roomNotFound(roomCode, next) {
