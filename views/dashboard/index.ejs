@@ -22,7 +22,8 @@
           
           div.textContent = `Guests: ${room.guests.length}`;
           div2.textContent = `Final Estimation: Placeholder`;
-          div3.textContent = `Created: ${room.date}`;
+          const date = new Date(room.date);
+          div3.textContent = `Created: ${date.toLocaleString()}`;
 
           const roomLink = document.createElement('div');
           roomLink.href = `/room/${room.roomCode}`;
