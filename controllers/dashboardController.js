@@ -6,10 +6,9 @@ async function buildDashboard(req, res) {
   res.render('dashboard/index', { title: 'Dashboard', userName: userName });
 }
 
-async function getUserRooms(req, res)
-{
+async function getUserRooms(req, res) {
   const userId = req.user.id;
-  const rooms = await Room.find({ ownerId: userId }).sort({ _id: -1});
+  const rooms = await Room.find({ ownerId: userId }).sort({ _id: -1 });
   res.json(rooms);
 }
 
@@ -27,7 +26,7 @@ async function createRoom(req, res) {
       guests: [],
     });
     await newRoom.save();
-    res.redirect(`/room?${room_code}`);
+    res.redirect(`/room/${room_code}`);
   } catch (error) {
     res.status(500).send('Failed to create room');
   }
@@ -45,5 +44,5 @@ async function validateCode(code) {
 module.exports = {
   buildDashboard,
   createRoom,
-  getUserRooms
+  getUserRooms,
 };
