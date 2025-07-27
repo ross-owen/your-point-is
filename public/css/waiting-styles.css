@@ -6,3 +6,11 @@
   justify-content: center; /* Vertical center (optional) */
   text-align: center;
 }
+
+#imagepizzawrapper {
+  width: 100%;
+}
+
+#pizza {
+  max-width: 100%;
+}
