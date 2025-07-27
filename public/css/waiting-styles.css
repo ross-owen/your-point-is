@@ -1,0 +1,8 @@
+#linkToShare {
+  width: 30vw;
+}
+
+#waiting-section {
+  justify-content: center; /* Vertical center (optional) */
+  text-align: center;
+}
