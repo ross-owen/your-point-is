@@ -1,0 +1,58 @@
+<section id="waiting-section" class="hidden">
+  <h3>Invite participants to the room with the link below</h3>
+  <div>
+    <input id="linkToShare" value="<%= location%>" readonly />
+    <button id="buttonToCopy" onclick="copyText()">📋 Copy</button>
+  </div>
+  <div>
+    <img
+      id="pizza"
+      src="/images/waitingPage/pizza1.jpg"
+      alt="Person Eating Pizza"
+    />
+  </div>
+  <% if (isOwner) { %>
+  <div class="owner-button">
+    <button
+      id="start-estimating"
+      class="btn btn-secondary btn-lg mt-4"
+      onclick="newRound()"
+    >
+      Start Estimating
+    </button>
+  </div>
+  <% } %>
+</section>
+
+<script>
+  function hideWaiting() {
+    document.getElementById('waiting-section').classList.add('hidden');
+  }
+  function showWaiting() {
+    document.getElementById('waiting-section').classList.remove('hidden');
+  }
+
+  function newRound() {
+    hideWaiting();
+    console.log('submitting socket.io for a new round');
+    getSocket().emit('new_round', roomCode);
+  }
+
+  function copyText() {
+    linkToShare = document.getElementById('linkToShare');
+    buttonToCopy = document.getElementById('buttonToCopy');
+    navigator.clipboard.writeText(linkToShare.value).then(() => {
+      buttonToCopy.innerHTML = '📋 Copied!';
+    });
+  }
+  function updatePizza() {
+    pizzaImage = document.getElementById('pizza');
+    if (pizzaImage.src.includes('pizza1.jpg')) {
+      pizzaImage.src = '/images/waitingPage/pizza2.jpg';
+    } else {
+      pizzaImage.src = '/images/waitingPage/pizza1.jpg';
+    }
+  }
+
+  setInterval(updatePizza, 1000);
+</script>

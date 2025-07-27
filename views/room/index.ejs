@@ -10,36 +10,38 @@
     }
     return socket;
   }
-  const roomCode = "<%= roomCode %>";
+  const roomCode = '<%= roomCode %>';
   function joinRoom(name) {
-
     if (roomCode) {
       socket = getSocket();
-      socket.on("connect", () => {
+      socket.on('connect', () => {
         if (roomCode) {
-          socket.emit("join_room", roomCode, name);
+          socket.emit('join_room', roomCode, name);
         }
       });
 
-      socket.on("reconnect", (attemptNumber) => {
-        console.log(`Successfully reconnected to Socket.IO server on attempt #${attemptNumber}!`);
+      socket.on('reconnect', (attemptNumber) => {
+        console.log(
+          `Successfully reconnected to Socket.IO server on attempt #${attemptNumber}!`
+        );
         // TODO: we may not even need this since `connect` gets fired even with reconnects
       });
 
-      socket.on("room_joined_confirmation", (confirmation) => {
+      socket.on('room_joined_confirmation', (confirmation) => {
         console.log(confirmation);
         hideJoin();
 
         // TODO: show waiting room
-        showVote();
+        showWaiting();
       });
 
-      socket.on("started_new_round", () => {
+      socket.on('started_new_round', () => {
         hideVoted();
+        hideWaiting();
         showVote();
       });
 
-      socket.on("voted", async (votes) => {
+      socket.on('voted', async (votes) => {
         hideVote();
         showVoted(votes);
       });
@@ -48,7 +50,6 @@
 </script>
 
 <div class="room">
-    <%- include("../partials/join") %>
-    <%- include("../partials/vote") %>
-    <%- include("../partials/voted") %>
+  <%- include("../partials/join") %> <%- include("../partials/vote") %> <%-
+  include("../partials/voted") %> <%- include("../partials/waiting") %>
 </div>
