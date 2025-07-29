@@ -25,7 +25,7 @@
           const date = new Date(room.date);
           div3.textContent = `Created: ${date.toLocaleString()}`;
 
-          const roomLink = document.createElement('div');
+          const roomLink = document.createElement('a');
           roomLink.href = `/room/${room.roomCode}`;
           roomLink.className =
             'room-link text-decoration-none list-group-item list-group-item-action w-100 d-flex justify-content-between align-items-center';
