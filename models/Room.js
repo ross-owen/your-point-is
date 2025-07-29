@@ -5,6 +5,7 @@ const roomSchema = new mongoose.Schema({
     roomCode: String,
     ownerId: String,
     guests: Array,
+    date : Date
 })
 
 module.exports = mongoose.model('Room', roomSchema);

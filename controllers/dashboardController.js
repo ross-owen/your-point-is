@@ -24,6 +24,7 @@ async function createRoom(req, res) {
       roomCode: room_code,
       ownerId: req.user.id,
       guests: [],
+      date: new Date()
     });
     await newRoom.save();
     res.redirect(`/room/${room_code}`);
