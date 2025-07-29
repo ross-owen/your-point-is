@@ -1,3 +1,25 @@
+<section id="vote-section" class="form-wrapper hidden">
+  <h2>Point!</h2>
+  <div id="cards-wrapper" class="row row-cols-1 row-cols-md-3 g-4">
+    <% for (let i = 0; i < cardDeck.length; i++) { %>
+      <button class="card-button" type="button">
+        <div id="card-<%= cardDeck[i] %>" class="col card-wrapper">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title"><%= cardDeck[i] %></h2>
+                </div>
+            </div>
+        </div>
+      </button>
+    <% } %>
+    </div>
+
+     <% if (isOwner) { %>
+        <button id="new-round-button" class="btn btn-secondary btn-lg mt-4">Start a New Round</button>
+    <% } %>
+</section>
+
+
 <div class="row row-cols-1 row-cols-md-3 g-4">
   <div class="col">
     <div class="card">
@@ -54,5 +76,16 @@
   var cards = document.querySelectorAll(".card").forEach((card) => {card.addEventListener("click", () => {
     document.querySelectorAll(".card").forEach((a) => {a.classList.remove("selectedCard")})
     card.classList.add("selectedCard");
+    socket.emit("sent-vote", (card) => {
+      // TODO - send the vote
+    })
   })} )
+
+      socket.emit("calling-votes", (response) => {
+      // TODO - Logic for the host to swtich views and collect the votes
+    })
+
+    socket.on("calling-votes", (callback) => {
+      // TODO - Return the voted card
+    })
 </script>
