@@ -1,12 +1,8 @@
 <section id="vote-section" class="hidden">
-    <div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="card-wrapper">
         <% cardDeck.forEach((c) => { %>
-            <div class="col">
-                <div class="card">
-                    <div class="card-body">
-                        <h2 class="card-title"><%= c %></h2>
-                    </div>
-                </div>
+            <div class="card">
+                <h2 class="card-title"><%= c %></h2>
             </div>
         <% }); %>
     </div>
@@ -28,7 +24,7 @@
       card.classList.add("selectedCard");
       const vote = card.querySelector(".card-title").textContent;
       console.log(`selected: ${vote}`);
-      getSocket().emit("voting", { room: roomCode, vote: vote });
+      getSocket().emit("voting", {room: roomCode, vote: vote});
     });
   });
 

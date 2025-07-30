@@ -1,16 +1,35 @@
-.card {
-  height: 300px;
-  background-color: white;
-}
-.card:hover {
-  background-color: black;
-  color: white;
+.card-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-gap: 1.25rem;
 }
 
-.card-body {
+.card {
+  width: 100%;
+  max-width: 180px;
+  height: 240px;
+
+  background: linear-gradient(0.25turn, #0299de 0%, #0198dd 25%, #8dcaf6 100%);
+  box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.7),
+  inset -1px -1px 2px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  padding: 20px;
+
+  cursor: pointer;
+
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.card:hover {
+  border: 4px solid black;
+}
+
+.card h2 {
+  font-size: 3em;
+  color: #114693;
+  text-shadow: 1px 1px 1px #fff, -1px -1px 1px #888;
 }
 
 .card-title {
@@ -18,17 +37,29 @@
 }
 
 .selectedCard {
-  background-color: black;
-  color: white;
+  border: 4px solid black;
 }
-
 
 /* this will go away once we do the pie chart */
 .voted-card {
-  height: 300px;
-  background-color: white;
+  width: 100%;
+  max-width: 180px;
+  height: 240px;
+
+  background: linear-gradient(0.25turn, #0299de 0%, #0198dd 25%, #8dcaf6 100%);
+  box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.7),
+  inset -1px -1px 2px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  padding: 20px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.voted-card h2 {
+  font-size: 3em;
+  color: #114693;
+  text-shadow: 1px 1px 1px #fff, -1px -1px 1px #888;
 }
 
