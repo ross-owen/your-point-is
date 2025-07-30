@@ -1,14 +1,12 @@
 <section id="voted-section" class="hidden">
     <h2>All votes are in for an average of: <span id="average-vote"></span></h2>
-    <div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="card-wrapper">
         <% for (let i = 0; i < cardDeck.length; i++) { %>
-            <div id="voted-card-<%= cardDeck[i] %>" class="col voted-card-wrapper hidden">
+            <div id="voted-card-<%= cardDeck[i] %>" class="voted-card-wrapper hidden">
                 <div class="voted-card">
-                    <div class="voted-card-body">
-                        <h2 class="voted-card-title"><%= cardDeck[i] %></h2>
-                    </div>
+                    <h2><%= cardDeck[i] %></h2>
                 </div>
-                <div id="voted-card-summary-<%= cardDeck[i] %>" class="vote-count"></div>
+                <div id="voted-card-summary-<%= cardDeck[i] %>"></div>
             </div>
         <% } %>
     </div>
@@ -63,6 +61,8 @@
 
   function countCards(voteCounts) {
     const cardVoteSummary = {};
+
+    console.log(voteCounts);
 
     voteCounts.forEach(vote => {
       if (!cardVoteSummary[vote.card]) {
