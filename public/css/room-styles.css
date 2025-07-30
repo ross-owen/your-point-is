@@ -1,0 +1,23 @@
+.room {
+  display: grid;
+  grid-template-columns: 2fr 6fr;
+  gap: 10px;
+}
+
+#participantStatus {
+  width: 100%;
+  padding: 0%;
+}
+
+.user {
+  display: grid;
+  grid-template-columns: 2fr 15fr 2fr;
+}
+
+@media only screen and (max-width: 768px) {
+  .room {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
