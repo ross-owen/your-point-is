@@ -1,0 +1,50 @@
+<section
+  id="participantStatus"
+  class="hidden border rounded shadow-sm p-4 mx-auto"
+>
+  <div id="containerParticipants"></div>
+</section>
+
+<script>
+  function updateParticipants(receivedParticipants) {
+    document.getElementById('participantStatus').classList.remove('hidden');
+    let container = document.getElementById('containerParticipants');
+    container.innerHTML = `<h4>Who's here?</h4>`;
+    container.innerHTML += receivedParticipants
+      .map((element) => {
+        return `<div class='user'>
+    <img src="/images/site/user.png" alt="user-icon" />
+    <p>${element}</p>
+    <p class='${element.replace(/ /g, '')} unvoted'>❔</p>
+    <p class='${element.replace(/ /g, '')} voted hidden'>✅</p>
+  </div>`;
+      })
+      .join('');
+  }
+
+  function updateVoteStatus(displayName) {
+    console.log(displayName);
+    const voteIcon = document.querySelectorAll(
+      `.${displayName.replace(/ /g, '')}`
+    );
+    console.log(voteIcon);
+    voteIcon.forEach((p) => {
+      if (!p.classList.contains('unvoted')) {
+        p.classList.remove('hidden');
+      } else {
+        p.classList.add('hidden');
+      }
+    });
+  }
+
+  function resetVoteStatus() {
+    const voteIcon1 = document.querySelectorAll('.unvoted');
+    const voteIcon2 = document.querySelectorAll('.voted');
+    voteIcon1.forEach((p) => {
+      p.classList.remove('hidden');
+    });
+    voteIcon2.forEach((p) => {
+      p.classList.add('hidden');
+    });
+  }
+</script>

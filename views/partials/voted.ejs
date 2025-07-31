@@ -1,7 +1,9 @@
 <section id="voted-section" class="hidden">
     <h2>All votes are in for an average of: <span id="average-vote"></span></h2>
+
     <div id="pieChart">
       <canvas id="myChart"></canvas>
+
     </div>
 
     <!-- Accessing chart.js via cdn for ease and lack of installation -->
@@ -63,6 +65,8 @@
 
   function countCards(voteCounts) {
     const cardVoteSummary = {};
+
+    console.log(voteCounts);
 
     voteCounts.forEach(vote => {
       if (!cardVoteSummary[vote.card]) {

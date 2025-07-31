@@ -38,17 +38,28 @@
         hideVoted();
         hideWaiting();
         showVote();
+        resetVoteStatus();
       });
 
       socket.on('voted', async (votes) => {
         hideVote();
         showVoted(votes);
       });
+
+      socket.on('participants', (participants) => {
+        console.log(participants.participants);
+        updateParticipants(participants.participants);
+      });
+
+      socket.on('user_voted', (displayName) => {
+        updateVoteStatus(displayName.displayName);
+      });
     }
   }
 </script>
 
 <div class="room">
-  <%- include("../partials/join") %> <%- include("../partials/vote") %> <%-
-  include("../partials/voted") %> <%- include("../partials/waiting") %>
+  <%- include("../partials/participants") %> <%- include("../partials/join") %>
+  <%- include("../partials/vote") %> <%- include("../partials/voted") %> <%-
+  include("../partials/waiting") %>
 </div>
