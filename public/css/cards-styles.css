@@ -23,12 +23,9 @@
 }
 
 
-/* this will go away once we do the pie chart */
-.voted-card {
-  height: 300px;
-  background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+#pieChart {
+  max-width: 600px;
+  padding: auto;
+  margin: auto;
 }
 
