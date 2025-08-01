@@ -1,16 +1,15 @@
 <section id="voted-section" class="hidden">
     <h2>All votes are in for an average of: <span id="average-vote"></span></h2>
-    <div class="card-wrapper">
-        <% for (let i = 0; i < cardDeck.length; i++) { %>
-            <div id="voted-card-<%= cardDeck[i] %>" class="voted-card-wrapper hidden">
-                <div class="voted-card">
-                    <h2><%= cardDeck[i] %></h2>
-                </div>
-                <div id="voted-card-summary-<%= cardDeck[i] %>"></div>
-            </div>
-        <% } %>
+
+    <div id="pieChart">
+      <canvas id="myChart"></canvas>
+
     </div>
 
+    <!-- Accessing chart.js via cdn for ease and lack of installation -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  
     <% if (isOwner) { %>
         <div class="owner-button">
             <button id="new-round-button" class="btn btn-secondary btn-lg mt-4">Start a New Round</button>
@@ -19,6 +18,7 @@
 </section>
 
 <script>
+
   const newRoundButton = document.getElementById('new-round-button');
   if (newRoundButton) {
     newRoundButton.addEventListener("click", () => {
@@ -59,6 +59,10 @@
     document.getElementById("average-vote").innerHTML = "";
   }
 
+  // define myChart as global for global access to delete
+  let myChart;
+  
+
   function countCards(voteCounts) {
     const cardVoteSummary = {};
 
@@ -76,6 +80,9 @@
       cardVoteSummary[vote.card].names.push(vote.name);
     });
 
+    // Call the createChart function to display the Pie Chart
+    createChart(cardVoteSummary);
+
     let sum = 0;
     let voterCount = 0;
 
@@ -83,18 +90,6 @@
       if (cardVoteSummary.hasOwnProperty(card)) {
         const summary = cardVoteSummary[card];
 
-        const cardId = `voted-card-${card}`;
-        document.getElementById(cardId).classList.remove("hidden");
-
-        const cardVoteId = `voted-card-summary-${card}`;
-        const voteSummary = document.getElementById(cardVoteId);
-
-        const namesString = summary.names.join(', ');
-
-        voteSummary.innerHTML = `
-            Total Votes: ${summary.count}<br>
-            By: ${namesString}
-          `;
 
         if (!isNaN(card)) {
           sum += (Number(card) * summary.count);
@@ -103,12 +98,62 @@
       }
     }
 
-    document.getElementById("average-vote").innerHTML = `${(sum / voterCount)}`;
+    document.getElementById("average-vote").innerHTML = `${(sum / voterCount).toFixed(0)}`;
   }
 
   function newRound() {
     hideVoted();
     console.log('submitting socket.io for a new round');
     getSocket().emit("new_round", roomCode);
+  }
+
+// Chart as global variable
+const ctx = document.getElementById('myChart');
+
+
+function createChart(data) {
+
+  // Takes in the data in the form of an object with arrays, each having
+  // the cardName, number of votes for that card, and names of the voters
+
+  // The function then deletes any existing charts, inputs the data appropriately,
+  // and creates a new chart
+
+  if (myChart !== undefined) {
+    myChart.destroy();
+  }
+
+// Create the empty list for ease of inserting data
+    let labelList = [];
+    let cardCount = [];
+
+    for (const item in data) {
+        if (data.hasOwnProperty(item)) {
+          let card = data[item];
+          labelList.push(item);
+          cardCount.push(card.count);
+        }
+    };
+
+// Creates the new chart, comes almost directly from the 
+// chart.js documentation
+  myChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: labelList,
+      datasets: [{
+        label: '# of Votes',
+        data: cardCount,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
   }
 </script>
