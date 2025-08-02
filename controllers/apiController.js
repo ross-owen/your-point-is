@@ -10,7 +10,7 @@ async function getUserRooms(req, res) {
 async function deleteRoom(req, res) {
   try {
     await Room.deleteOne({roomCode: req.params.code});
-    res.status(200);
+    res.status(200).json({ message: 'Room deleted successfully' });
   } catch (e) {
     if (e.status) {
       res.status(400);

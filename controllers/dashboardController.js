@@ -27,7 +27,7 @@ async function createRoom(req, res) {
       date: new Date()
     });
     await newRoom.save();
-    res.redirect(`/room/${room_code}`);
+    res.redirect(`/room/${room_code}?created=1`);
   } catch (error) {
     res.status(500).send('Failed to create room');
   }
