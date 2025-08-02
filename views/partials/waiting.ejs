@@ -1,8 +1,8 @@
 <section id="waiting-section" class="hidden">
   <h3>Invite participants to the room with the link below</h3>
-  <div>
-    <input id="linkToShare" value="<%= location%>" readonly />
-    <button id="buttonToCopy" onclick="copyText()">📋 Copy</button>
+  <div class="container d-flex justify-content-center align-items-center mb-4">
+    <input class="form-control me-2" id="linkToShare" value="<%= location%>" readonly />
+    <button class="btn btn-outline-primary" id="buttonToCopy" onclick="copyText()">📋 Copy</button>
   </div>
   <div id="imagepizzawrapper">
     <img

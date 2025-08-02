@@ -1,18 +1,16 @@
 <section id="join-section" class="form-wrapper">
-    <% if (isOwner) { %>
-        <h2>Welcome to your room</h2>
-    <% } else { %>
-        <h2>Welcome to the room</h2>
-    <% } %>
-    <p>Enter your name and click the Join Room button to begin the estimation session</p>
-    <div>
-    <label for="join-name">Name:
-        <input type="text" id="join-name" placeholder="John Smith">
-    </label>
-    </div>
-    <button id="join-button" class="btn btn-secondary btn-lg mt-4">Join Room</button>
-</section>
-
+      <% if (isOwner) { %>
+          <h2>Welcome to your room</h2>
+      <% } else { %>
+          <h2>Welcome to the room</h2>
+      <% } %>
+      <p>Enter your name and click the Join Room button to begin the estimation session</p>
+      <div class="form-group d-flex align-items-center mb-3">
+        <label class="me-2" for="join-name">Name:</label>
+        <input class="form-control" type="text" id="join-name" placeholder="John Smith">
+      </div>
+      <button id="join-button" class="btn btn-secondary btn-lg mt-4">Join Room</button>
+  </section>
 <script>
   const joinAsName = localStorage.getItem('join-as_name') || "<%= displayName %>";
   console.log(joinAsName);

@@ -1,39 +1,60 @@
 <div class="container mt-5">
     <h1 class="display-4 mb-4 text-center"><%= title %></h1>
     <%- messages() %>
-    <div class="border rounded shadow-sm p-4 mx-auto dashboard">
-        <h2 class="h5 mb-1 fw-semibold">Hi <%= userName %></h2>
-        <h3 class="h6 text-muted mb-3">Your Rooms</h3>
-        <ul class="list-group list-gruop-flush"></ul>
+    <div id="alert" class="mt-3"></div>
+    <div class="border rounded shadow-sm p-4 mx-auto">
+        <div class="your-rooms d-flex justify-content-between align-items-center mb-4">
+          <h3 class="h5 text-muted mb-3">Your Rooms</h3>
+          <form action="/dashboard/" method="POST">
+            <button type="submit" class="btn btn-outline-primary btn-lg">Create a Room</button>
+          </form>
+        </div>
+        <ul class="list-group list-gruop-flush roomsList"></ul>
     </div>
 </div>
 
+<script src="/js/script.js"></script>
 <script>
   fetch('/api/rooms')
       .then((res) => res.json())
       .then((data) => {
-        const roomsUl = document.querySelector('.dashboard ul');
+        const roomsUl = document.querySelector('.roomsList');
         roomsUl.innerHTML = '';
         if (data.length > 0) {
           data.forEach((room) => {
             const div = document.createElement('div');
-            const div2 = document.createElement('div');
-            const div3 = document.createElement('div');
-
-            div.textContent = `Guests: ${room.guests.length}`;
-            div2.textContent = `Final Estimation: Placeholder`;
             const date = new Date(room.date);
-            div3.textContent = `Created: ${date.toLocaleString()}`;
+            const button = document.createElement('button');
+            button.className = 'btn btn-outline-danger btn-sm ms-3';
+            button.title = 'Click to delete this room';
+            button.textContent = '🗑️';
+            button.addEventListener('click', async (e) => {
+              e.preventDefault();
+              const response = await fetch(`/api/room/${room.roomCode}`, {method: 'DELETE'});
+              if (response.ok) {
+                showAlert('✅ Room deleted successfully!', 'success');
+                const roomelement = button.closest('.room-link');
+                if (roomelement) {
+                  roomelement.remove();
+                }
+              } else {
+                showAlert('❌ Failed to delete room.', 'danger');
+              }          
+            })
+
+            div.textContent = `Created: ${date.toLocaleString()}`;
+            div.className = 'roomDate text-muted me-1';
+
+            div.appendChild(button);
 
             const roomLink = document.createElement('a');
             roomLink.href = `/room/${room.roomCode}`;
-            roomLink.className =
-                'room-link text-decoration-none list-group-item list-group-item-action w-100 d-flex justify-content-between align-items-center';
+            roomLink.className = 'room-link text-decoration-none list-group-item list-group-item-action w-100 d-flex justify-content-between align-items-center me-1';
             roomLink.textContent = `Room Code: ${room.roomCode}`;
+
             roomLink.appendChild(div);
-            roomLink.appendChild(div2);
-            roomLink.appendChild(div3);
             roomsUl.appendChild(roomLink);
+          
           });
         } else {
           const li = document.createElement('li');

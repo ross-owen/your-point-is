@@ -27,8 +27,47 @@ body
   display: none;
 }
 
+.room-link:nth-child(odd) {
+  background-color: #f8f9fa;
+}
+
+.room-link:nth-child(even) {
+  background-color: #e9ecef;
+}
+
 .room-link:hover
 {
   background-color: #0d6efd;
-  color: white;
+  color: white !important;
+}
+
+.room-link:hover .roomDate {
+  color: white !important;
+}
+
+@media (max-width: 576px) {
+
+  .header-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .logged-in-header {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .room-link {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+
+  .room-link button {
+    align-self: flex-end;
+    margin-top: 0.5rem;
+  }
+
+  .your-rooms {
+    flex-direction: column;
+  }
 }
