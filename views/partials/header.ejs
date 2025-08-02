@@ -1,19 +1,18 @@
 <header class="bg-wite py-3 border-bottom shadow-sm">
-  <div class="container d-flex justify-content-between align-items-center">
-      <a href="/" title="Return to home page"><img src="/images/site/logo.png" alt="Your Point Is Logo" class="img-fluid" style="max-height: 80px;"></a>
-      <% if (loggedIn) {%>
-        <div class="d-flex align-items-center"">
-          <a class="btn btn-outline-primary me-2" href="/dashboard/">Dashboard</a>
-          <form action="/dashboard/" method="POST">
-            <button type="submit" class="btn btn-outline-primary me-2">Create Room</button>
-          </form>
-        </div>
-      <div>
-        <span class="m-2"><%=loggedIn.displayName%></span>| 
-        <a class="btn btn-outline-danger ms-2" title="Click to log out" href="/auth/logout">Logout</a>
+    <div class="container d-flex justify-content-between align-items-center">
+        <a href="/" title="Return to home page">
+            <img src="/images/site/logo.png" alt="Your Point Is Logo" class="img-fluid" style="max-height: 80px;">
+        </a>
+        <% if (loggedIn) { %>
+        <div>
+            <span class="m-2">Welcome <%= loggedIn.displayName %></span>
+            <span class="header-items">
+                <a class="btn btn-outline-primary ms-2" href="/dashboard/">Dashboard</a>
+                <a class="btn btn-outline-danger ms-2" title="Click to log out" href="/auth/logout">Logout</a>
+            </span>
         <% } else { %>
-        <a class="btn btn-outline-primary" title="Click to log in" href="/auth/login">Login</a>
+            <a class="btn btn-outline-primary" title="Click to log in" href="/auth/login">Login</a>
         <% } %>
-      </div>
-  </div>
+        </div>
+    </div>
 </header>

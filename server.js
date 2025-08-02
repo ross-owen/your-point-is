@@ -90,6 +90,7 @@ app
   .use("/auth", require("./routes/authRoute"))
   .use("/dashboard", require("./routes/dashboardRoute"))
   .use("/room", require("./routes/roomRoute"))
+  .use("/api", require("./routes/apiRoute"))
   // 404 - must be last route in list
   .use(async (req, res, next) => {
     next({ status: 404, message: "Sorry, we appear to have lost that page." });
@@ -100,16 +101,20 @@ app
     console.error(
       `Error at: "${req.originalUrl}": ${err.status}: ${err.message}`
     );
-    if (err.status === 404) {
+
+    let message;
+    const statusCode = err.status || 500;
+
+    if (statusCode === 404) {
       message = err.message;
     } else if (err.status === 403) {
       message = "Access denied";
     } else {
-      message =
-        "Something went wrong! Please try again. If the problem persists, contact me on the corner, near the flagpole, for your beating.";
+      message = "A server error occurred";
     }
-    res.render("errors/error", {
-      title: err.status || "Server Error",
+
+    res.status(statusCode).render("errors/error", {
+      title: statusCode || "Server Error",
       message: message,
     });
   });

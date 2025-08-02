@@ -29,7 +29,16 @@ function roomNotFound(roomCode, next) {
   const error = new Error("Room Not Found")
   error.status = 404;
 
-  return next(error)
+  return next(error);
+}
+
+function unauthorized(next) {
+  console.warn("User is unauthorized");
+
+  const error = new Error("User is unauthorized");
+  error.status = 401;
+
+  return next(error);
 }
 
 Util.requireRoom = (req, res, next) => {
@@ -53,5 +62,37 @@ Util.requireRoom = (req, res, next) => {
         return next(error);
       });
 };
+
+Util.ensureOwnedRoom = (req, res, next) => {
+  console.log('requireRoomByOwner')
+  if (!req.isAuthenticated()) {
+    return unauthorized(next);
+  }
+
+  const roomCode = req.params.code;
+  if (!roomCode) {
+    return roomNotFound("", next);
+  }
+
+  Room.findOne({roomCode: roomCode})
+      .then(room => {
+        console.log(`in then: ${room}`);
+        if (room) {
+          if (room.ownerId !== req.user.id) {
+            unauthorized(next);
+          } else {
+            next();
+          }
+        } else {
+          return roomNotFound(roomCode, next);
+        }
+      })
+      .catch(err => {
+        console.error("Error finding room:", err);
+        const error = new Error("Database Error while searching for room.");
+        error.status = 500;
+        return next(error);
+      });
+}
 
 module.exports = Util

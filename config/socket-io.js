@@ -49,7 +49,7 @@ module.exports = (httpServer, sessionMiddleware) => {
         let displayName = name;
 
         // Check if a display name is already stored in the session for this guest
-        if (socket.handshake.session.socketDisplayName) {
+        if (!displayName && socket.handshake.session.socketDisplayName) {
           displayName = socket.handshake.session.socketDisplayName;
         } else {
           socket.handshake.session.socketDisplayName = displayName;

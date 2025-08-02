@@ -10,12 +10,6 @@ router.get(
   utilities.handleErrors(controller.buildDashboard)
 );
 
-router.get(
-  '/api/rooms',
-  ensureAuthenticated,
-  utilities.handleErrors(controller.getUserRooms)
-);
-
 router.post(
   '/',
   ensureAuthenticated,

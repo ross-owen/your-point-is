@@ -1,45 +1,45 @@
 <div class="container mt-5">
-  <h1 class="display-4 mb-4 text-center"><%= title %></h1>
-  <%- messages() %>
-  <div class="border rounded shadow-sm p-4 mx-auto dashboard">
-    <h2 class="h5 mb-1 fw-semibold">Hi <%= userName %></h2>
-    <h3 class="h6 text-muted mb-3">Your Rooms</h3>
-    <ul class="list-group list-gruop-flush"></ul>
-  </div>
+    <h1 class="display-4 mb-4 text-center"><%= title %></h1>
+    <%- messages() %>
+    <div class="border rounded shadow-sm p-4 mx-auto dashboard">
+        <h2 class="h5 mb-1 fw-semibold">Hi <%= userName %></h2>
+        <h3 class="h6 text-muted mb-3">Your Rooms</h3>
+        <ul class="list-group list-gruop-flush"></ul>
+    </div>
 </div>
 
 <script>
-  fetch('/dashboard/api/rooms')
-    .then((res) => res.json())
-    .then((data) => {
-      const roomsUl = document.querySelector('.dashboard ul');
-      roomsUl.innerHTML = '';
-      if (data.length > 0) {
-        data.forEach((room) => {
-          const div = document.createElement('div');
-          const div2 = document.createElement('div');
-          const div3 = document.createElement('div');
-          
-          div.textContent = `Guests: ${room.guests.length}`;
-          div2.textContent = `Final Estimation: Placeholder`;
-          const date = new Date(room.date);
-          div3.textContent = `Created: ${date.toLocaleString()}`;
+  fetch('/api/rooms')
+      .then((res) => res.json())
+      .then((data) => {
+        const roomsUl = document.querySelector('.dashboard ul');
+        roomsUl.innerHTML = '';
+        if (data.length > 0) {
+          data.forEach((room) => {
+            const div = document.createElement('div');
+            const div2 = document.createElement('div');
+            const div3 = document.createElement('div');
 
-          const roomLink = document.createElement('a');
-          roomLink.href = `/room/${room.roomCode}`;
-          roomLink.className =
-            'room-link text-decoration-none list-group-item list-group-item-action w-100 d-flex justify-content-between align-items-center';
-          roomLink.textContent = `Room Code: ${room.roomCode}`;
-          roomLink.appendChild(div);
-          roomLink.appendChild(div2);
-          roomLink.appendChild(div3);
-          roomsUl.appendChild(roomLink);
-        });
-      } else {
-        const li = document.createElement('li');
-        li.className = 'list-group-item text-center text-muted';
-        li.textContent = 'No rooms found';
-        roomsUl.appendChild(li);
-      }
-    });
+            div.textContent = `Guests: ${room.guests.length}`;
+            div2.textContent = `Final Estimation: Placeholder`;
+            const date = new Date(room.date);
+            div3.textContent = `Created: ${date.toLocaleString()}`;
+
+            const roomLink = document.createElement('a');
+            roomLink.href = `/room/${room.roomCode}`;
+            roomLink.className =
+                'room-link text-decoration-none list-group-item list-group-item-action w-100 d-flex justify-content-between align-items-center';
+            roomLink.textContent = `Room Code: ${room.roomCode}`;
+            roomLink.appendChild(div);
+            roomLink.appendChild(div2);
+            roomLink.appendChild(div3);
+            roomsUl.appendChild(roomLink);
+          });
+        } else {
+          const li = document.createElement('li');
+          li.className = 'list-group-item text-center text-muted';
+          li.textContent = 'No rooms found';
+          roomsUl.appendChild(li);
+        }
+      });
 </script>
