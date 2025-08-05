@@ -123,16 +123,18 @@
 // Create the empty list for ease of inserting data
     let labelList = [];
     let cardCount = [];
+    let voterNames = [];
 
     for (const item in data) {
       if (data.hasOwnProperty(item)) {
         let card = data[item];
         labelList.push(item);
         cardCount.push(card.count);
+        voterNames.push(card.names.join(", "));
       }
     }
 
-// Creates the new chart, comes almost directly from the 
+// Creates the new chart
     Chart.register(ChartDataLabels);
 
     myChart = new Chart(ctx, {
@@ -142,6 +144,7 @@
         datasets: [{
           label: '# of Votes',
           data: cardCount,
+          descriptions: voterNames,
           borderWidth: 3
         }]
       },
@@ -156,6 +159,23 @@
             },
             formatter: function (value, context) {
               return context.chart.data.labels[context.dataIndex];
+            }
+          },
+          tooltip: {
+            displayColors: false,
+            titleFont: {
+              size: 12
+            },
+            bodyFont: {
+              size: 18
+            },
+            callbacks: {
+              title: (context) => {
+                return `${context[0].formattedValue} vote(s)`;
+              },
+              label: function (context) {
+                return context.dataset.descriptions[context.dataIndex];
+              }
             }
           }
         }
