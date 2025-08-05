@@ -151,8 +151,14 @@ module.exports = (httpServer, sessionMiddleware) => {
       );
       await saveVote(room, sessionId, displayName, vote);
 
+      let remove = true;
+      if (vote) {
+        remove = false;
+      }
+
       io.to(room).emit('user_voted', {
         displayName: displayName,
+        remove: remove
       });
     });
 
@@ -253,21 +259,25 @@ module.exports = (httpServer, sessionMiddleware) => {
 };
 
 async function saveVote(roomCode, sessionId, displayName, vote) {
-  await Vote.findOneAndUpdate(
-    {
-      roomCode: roomCode,
-      sessionId: sessionId,
-    },
-    {
-      vote: vote,
-      displayName: displayName,
-    },
-    {
-      new: true,
-      upsert: true,
-      runValidators: true,
-    }
-  );
+  if (vote) {
+    await Vote.findOneAndUpdate(
+        {
+          roomCode: roomCode,
+          sessionId: sessionId,
+        },
+        {
+          vote: vote,
+          displayName: displayName,
+        },
+        {
+          new: true,
+          upsert: true,
+          runValidators: true,
+        }
+    );
+  } else {
+    await Vote.deleteOne({roomCode: roomCode, sessionId: sessionId});
+  }
 }
 
 async function getVotes(roomCode) {

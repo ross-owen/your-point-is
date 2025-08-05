@@ -22,17 +22,24 @@
       .join('');
   }
 
-  function updateVoteStatus(displayName) {
-    console.log(displayName);
+  function updateVoteStatus(displayName, remove) {
     const voteIcon = document.querySelectorAll(
       `.${displayName.replace(/ /g, '')}`
     );
-    console.log(voteIcon);
     voteIcon.forEach((p) => {
-      if (!p.classList.contains('unvoted')) {
-        p.classList.remove('hidden');
-      } else {
-        p.classList.add('hidden');
+      if (remove) {
+        if (p.classList.contains('unvoted')) {
+          p.classList.remove('hidden');
+        } else {
+          p.classList.add('hidden');
+        }
+      }
+      else {
+        if (!p.classList.contains('unvoted')) {
+          p.classList.remove('hidden');
+        } else {
+          p.classList.add('hidden');
+        }
       }
     });
   }

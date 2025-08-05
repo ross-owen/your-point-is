@@ -29,7 +29,6 @@
       });
 
       socket.on('room_joined_confirmation', (confirmation) => {
-        console.log(confirmation);
         hideJoin();
 
         showWaiting();
@@ -48,12 +47,11 @@
       });
 
       socket.on('participants', (participants) => {
-        console.log(participants.participants);
         updateParticipants(participants.participants);
       });
 
-      socket.on('user_voted', (displayName) => {
-        updateVoteStatus(displayName.displayName);
+      socket.on('user_voted', ({displayName, remove}) => {
+        updateVoteStatus(displayName, remove);
       });
     }
   }

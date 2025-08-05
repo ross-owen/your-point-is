@@ -19,11 +19,17 @@
 
   cards.forEach((card) => {
     card.addEventListener("click", () => {
-      resetCards();
+      const cardNumber = card.querySelector(".card-title").textContent;
 
-      card.classList.add("selectedCard");
-      const vote = card.querySelector(".card-title").textContent;
-      console.log(`selected: ${vote}`);
+      resetCards(cardNumber);
+
+      let vote = cardNumber;
+      if (card.classList.contains("selectedCard")) {
+        vote = null;
+      }
+
+      card.classList.toggle("selectedCard");
+
       getSocket().emit("voting", {room: roomCode, vote: vote});
     });
   });
@@ -44,13 +50,16 @@
     document.getElementById("vote-section").classList.add("hidden");
   }
 
-  function resetCards() {
-    cards.forEach((c) => c.classList.remove("selectedCard"));
+  function resetCards(cardNumber) {
+    for (const card of cards) {
+      if (!(cardNumber && card.querySelector(".card-title").textContent === cardNumber)) {
+        card.classList.remove("selectedCard");
+      }
+    }
   }
 
   function collectVotes() {
     hideVote();
-    console.log('collecting votes with socket.io')
     getSocket().emit("collect_votes", roomCode);
   }
 </script>
