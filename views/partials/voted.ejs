@@ -128,9 +128,11 @@
     for (const item in data) {
       if (data.hasOwnProperty(item)) {
         let card = data[item];
-        labelList.push(item);
-        cardCount.push(card.count);
-        voterNames.push(card.names.join(", "));
+        if (item !== "?") {
+          labelList.push(item);
+          cardCount.push(card.count);
+          voterNames.push(card.names.join(", "));
+        }
       }
     }
 
