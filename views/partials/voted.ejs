@@ -2,14 +2,14 @@
     <h2>All votes are in for an average of: <span id="average-vote"></span></h2>
 
     <div id="pieChart">
-      <canvas id="myChart"></canvas>
+        <canvas id="myChart"></canvas>
 
     </div>
 
     <!-- Accessing chart.js via cdn for ease and lack of installation -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
-  
     <% if (isOwner) { %>
         <div class="owner-button">
             <button id="new-round-button" class="btn btn-secondary btn-lg mt-4">Start a New Round</button>
@@ -61,7 +61,7 @@
 
   // define myChart as global for global access to delete
   let myChart;
-  
+
 
   function countCards(voteCounts) {
     const cardVoteSummary = {};
@@ -98,7 +98,7 @@
       }
     }
 
-    document.getElementById("average-vote").innerHTML = `${(sum / voterCount).toFixed(0)}`;
+    document.getElementById("average-vote").innerHTML = `${(sum / voterCount).toFixed(2)}`;
   }
 
   function newRound() {
@@ -107,53 +107,64 @@
     getSocket().emit("new_round", roomCode);
   }
 
-// Chart as global variable
-const ctx = document.getElementById('myChart');
+  // Chart as global variable
+  const ctx = document.getElementById('myChart');
 
 
-function createChart(data) {
+  function createChart(data) {
 
-  // Takes in the data in the form of an object with arrays, each having
-  // the cardName, number of votes for that card, and names of the voters
+    // Takes in the data in the form of an object with arrays, each having
+    // the cardName, number of votes for that card, and names of the voters
 
-  // The function then deletes any existing charts, inputs the data appropriately,
-  // and creates a new chart
+    // The function then deletes any existing charts, inputs the data appropriately,
+    // and creates a new chart
 
-  if (myChart !== undefined) {
-    myChart.destroy();
-  }
+    if (myChart !== undefined) {
+      myChart.destroy();
+    }
 
 // Create the empty list for ease of inserting data
     let labelList = [];
     let cardCount = [];
 
     for (const item in data) {
-        if (data.hasOwnProperty(item)) {
-          let card = data[item];
-          labelList.push(item);
-          cardCount.push(card.count);
-        }
-    };
+      if (data.hasOwnProperty(item)) {
+        let card = data[item];
+        labelList.push(item);
+        cardCount.push(card.count);
+      }
+    }
 
 // Creates the new chart, comes almost directly from the 
 // chart.js documentation
-  myChart = new Chart(ctx, {
-    type: 'pie',
-    data: {
-      labels: labelList,
-      datasets: [{
-        label: '# of Votes',
-        data: cardCount,
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
+// Step 2: Register the plugin after including the script
+    Chart.register(ChartDataLabels);
+
+    myChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: labelList,
+        datasets: [{
+          label: '# of Votes',
+          data: cardCount,
+          borderWidth: 3
+        }]
+      },
+      options: {
+        plugins: {
+          datalabels: {
+            align: 'center',
+            color: '#fff',
+            font: {
+              weight: 'bold',
+              size: 72
+            },
+            formatter: function(value, context) {
+              return context.chart.data.labels[context.dataIndex];
+            }
+          }
         }
       }
-    }
-  });
+    });
   }
 </script>
