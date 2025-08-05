@@ -136,8 +136,6 @@
     }
 
 // Creates the new chart, comes almost directly from the 
-// chart.js documentation
-// Step 2: Register the plugin after including the script
     Chart.register(ChartDataLabels);
 
     myChart = new Chart(ctx, {
@@ -159,7 +157,7 @@
               weight: 'bold',
               size: 72
             },
-            formatter: function(value, context) {
+            formatter: function (value, context) {
               return context.chart.data.labels[context.dataIndex];
             }
           }
