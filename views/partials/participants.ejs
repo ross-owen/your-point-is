@@ -2,7 +2,9 @@
   id="participantStatus"
   class="hidden border rounded shadow-sm p-4 mx-auto"
 >
-  <div id="containerParticipants"></div>
+  <div id="containerParticipants">
+    <h4>Who's here?</h4>
+  </div>
 </section>
 
 <script>
@@ -11,12 +13,17 @@
     let container = document.getElementById('containerParticipants');
     container.innerHTML = `<h4>Who's here?</h4>`;
     container.innerHTML += receivedParticipants
-      .map((element) => {
+      .map(([name, status]) => {
         return `<div class='user'>
     <img src="/images/site/user.png" alt="user-icon" />
-    <p>${element}</p>
-    <p class='${element.replace(/ /g, '')} unvoted'>❔</p>
-    <p class='${element.replace(/ /g, '')} voted hidden'>✅</p>
+    <p>${name}</p>
+    ${
+      status === 'waiting'
+        ? `<p class='${name.replace(/ /g, '')} waiting'>🍕</p>`
+        : status === 'voting'
+        ? `<p class='${name.replace(/ /g, '')} unvoted'>❔</p>`
+        : `<p class='${name.replace(/ /g, '')} voted'>✅</p>`
+    }
   </div>`;
       })
       .join('');
@@ -33,8 +40,7 @@
         } else {
           p.classList.add('hidden');
         }
-      }
-      else {
+      } else {
         if (!p.classList.contains('unvoted')) {
           p.classList.remove('hidden');
         } else {

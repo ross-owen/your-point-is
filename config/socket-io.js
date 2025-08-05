@@ -68,9 +68,9 @@ module.exports = (httpServer, sessionMiddleware) => {
 
         // Add the user (by userId/sessionID) to the room"s participant list
         if (!io.roomParticipants.has(roomName)) {
-          io.roomParticipants.set(roomName, new Set());
+          io.roomParticipants.set(roomName, new Map());
         }
-        io.roomParticipants.get(roomName).add(userId);
+        io.roomParticipants.get(roomName).set(userId, 'waiting');
 
         console.log(
           `User "${displayName}" (ID: ${userId}, Socket: ${socket.id}) joined room: "${roomName}"`
@@ -96,7 +96,7 @@ module.exports = (httpServer, sessionMiddleware) => {
         // Prepare the updated list of participants for this room (using their display names)
         const currentParticipantsInRoom = Array.from(
           io.roomParticipants.get(roomName)
-        ).map((participantId) => {
+        ).map(([participantId, status]) => {
           // Try to resolve userId back to displayName from currently active sockets
           // This relies on `socket.data` being set on a connected socket.
           if (io.onlineUsers.has(participantId)) {
@@ -105,10 +105,10 @@ module.exports = (httpServer, sessionMiddleware) => {
             )[0];
             const participantSocket = io.sockets.sockets.get(firstSocketId);
             return participantSocket && participantSocket.data
-              ? participantSocket.data.displayName
-              : participantId;
+              ? [participantSocket.data.displayName, status]
+              : [participantId, status];
           }
-          return participantId; // Fallback
+          return [participantId, status]; // Fallback
         });
 
         // Broadcast to all clients in the room (including the sender) about the join
@@ -132,11 +132,35 @@ module.exports = (httpServer, sessionMiddleware) => {
       console.log(
         `Start a new round message to room "${room}" from "${displayName}" (ID: ${userId}, Socket: ${socket.id})"`
       );
+
+      for (const [userId] of io.roomParticipants.get(room)) {
+        io.roomParticipants.get(room).set(userId, 'voting');
+      }
+
+      // Prepare the updated list of participants for this room (using their display names)
+      const currentParticipantsInRoom = Array.from(
+        io.roomParticipants.get(room)
+      ).map(([participantId, status]) => {
+        // Try to resolve userId back to displayName from currently active sockets
+        // This relies on `socket.data` being set on a connected socket.
+        if (io.onlineUsers.has(participantId)) {
+          const firstSocketId = Array.from(
+            io.onlineUsers.get(participantId)
+          )[0];
+          const participantSocket = io.sockets.sockets.get(firstSocketId);
+          return participantSocket && participantSocket.data
+            ? [participantSocket.data.displayName, status]
+            : [participantId, status];
+        }
+        return [participantId, status]; // Fallback
+      });
+
       // Emit the message ONLY to clients in that specific room
       io.to(room).emit('started_new_round', {
         sender: displayName,
         userId: userId,
         room: room,
+        participants: currentParticipantsInRoom,
       });
     });
 
@@ -154,11 +178,33 @@ module.exports = (httpServer, sessionMiddleware) => {
       let remove = true;
       if (vote) {
         remove = false;
+        io.roomParticipants.get(room).set(userId, 'voted');
+      } else {
+        io.roomParticipants.get(room).set(userId, 'voting');
       }
+
+      // Prepare the updated list of participants for this room (using their display names)
+      const currentParticipantsInRoom = Array.from(
+        io.roomParticipants.get(room)
+      ).map(([participantId, status]) => {
+        // Try to resolve userId back to displayName from currently active sockets
+        // This relies on `socket.data` being set on a connected socket.
+        if (io.onlineUsers.has(participantId)) {
+          const firstSocketId = Array.from(
+            io.onlineUsers.get(participantId)
+          )[0];
+          const participantSocket = io.sockets.sockets.get(firstSocketId);
+          return participantSocket && participantSocket.data
+            ? [participantSocket.data.displayName, status]
+            : [participantId, status];
+        }
+        return [participantId, status]; // Fallback
+      });
 
       io.to(room).emit('user_voted', {
         displayName: displayName,
-        remove: remove
+        remove: remove,
+        participants: currentParticipantsInRoom,
       });
     });
 
@@ -167,6 +213,10 @@ module.exports = (httpServer, sessionMiddleware) => {
       console.log(`Collecting votes for room "${room}"`);
       const votes = await getVotes(room);
       console.log(votes);
+      for (const [userId] of io.roomParticipants.get(room)) {
+        io.roomParticipants.get(room).set(userId, 'voting');
+      }
+
       io.to(room).emit('voted', votes);
     });
 
@@ -221,7 +271,7 @@ module.exports = (httpServer, sessionMiddleware) => {
                 // Prepare the updated list of participants for this room
                 const currentParticipantsInRoom = io.roomParticipants.has(room)
                   ? Array.from(io.roomParticipants.get(room)).map(
-                      (participantId) => {
+                      ([participantId, status]) => {
                         if (io.onlineUsers.has(participantId)) {
                           const firstSocketId = Array.from(
                             io.onlineUsers.get(participantId)
@@ -229,10 +279,10 @@ module.exports = (httpServer, sessionMiddleware) => {
                           const participantSocket =
                             io.sockets.sockets.get(firstSocketId);
                           return participantSocket && participantSocket.data
-                            ? participantSocket.data.displayName
-                            : participantId;
+                            ? [participantSocket.data.displayName, status]
+                            : [participantId, status];
                         }
-                        return participantId;
+                        return [participantId, status];
                       }
                     )
                   : [];
@@ -261,22 +311,22 @@ module.exports = (httpServer, sessionMiddleware) => {
 async function saveVote(roomCode, sessionId, displayName, vote) {
   if (vote) {
     await Vote.findOneAndUpdate(
-        {
-          roomCode: roomCode,
-          sessionId: sessionId,
-        },
-        {
-          vote: vote,
-          displayName: displayName,
-        },
-        {
-          new: true,
-          upsert: true,
-          runValidators: true,
-        }
+      {
+        roomCode: roomCode,
+        sessionId: sessionId,
+      },
+      {
+        vote: vote,
+        displayName: displayName,
+      },
+      {
+        new: true,
+        upsert: true,
+        runValidators: true,
+      }
     );
   } else {
-    await Vote.deleteOne({roomCode: roomCode, sessionId: sessionId});
+    await Vote.deleteOne({ roomCode: roomCode, sessionId: sessionId });
   }
 }
 

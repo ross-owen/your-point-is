@@ -34,11 +34,11 @@
         showWaiting();
       });
 
-      socket.on('started_new_round', () => {
+      socket.on('started_new_round', (data) => {
         hideVoted();
         hideWaiting();
         showVote();
-        resetVoteStatus();
+        updateParticipants(data.participants);
       });
 
       socket.on('voted', async (votes) => {
@@ -50,8 +50,8 @@
         updateParticipants(participants.participants);
       });
 
-      socket.on('user_voted', ({displayName, remove}) => {
-        updateVoteStatus(displayName, remove);
+      socket.on('user_voted', (data) => {
+        updateParticipants(data.participants);
       });
     }
   }
