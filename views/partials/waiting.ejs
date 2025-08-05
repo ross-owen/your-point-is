@@ -34,7 +34,6 @@
 
   function newRound() {
     hideWaiting();
-    console.log('submitting socket.io for a new round');
     getSocket().emit('new_round', roomCode);
   }
 

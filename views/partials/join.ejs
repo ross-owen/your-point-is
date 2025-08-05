@@ -13,7 +13,6 @@
   </section>
 <script>
   const joinAsName = localStorage.getItem('join-as_name') || "<%= displayName %>";
-  console.log(joinAsName);
   document.getElementById("join-name").value = joinAsName;
 
   document.getElementById("join-button").addEventListener("click", () => {

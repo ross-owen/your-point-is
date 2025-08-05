@@ -64,7 +64,6 @@ Util.requireRoom = (req, res, next) => {
 };
 
 Util.ensureOwnedRoom = (req, res, next) => {
-  console.log('requireRoomByOwner')
   if (!req.isAuthenticated()) {
     return unauthorized(next);
   }
@@ -76,7 +75,6 @@ Util.ensureOwnedRoom = (req, res, next) => {
 
   Room.findOne({roomCode: roomCode})
       .then(room => {
-        console.log(`in then: ${room}`);
         if (room) {
           if (room.ownerId !== req.user.id) {
             unauthorized(next);

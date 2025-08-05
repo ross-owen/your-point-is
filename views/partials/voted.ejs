@@ -66,8 +66,6 @@
   function countCards(voteCounts) {
     const cardVoteSummary = {};
 
-    console.log(voteCounts);
-
     voteCounts.forEach(vote => {
       if (!cardVoteSummary[vote.card]) {
         cardVoteSummary[vote.card] = {
@@ -103,7 +101,6 @@
 
   function newRound() {
     hideVoted();
-    console.log('submitting socket.io for a new round');
     getSocket().emit("new_round", roomCode);
   }
 
