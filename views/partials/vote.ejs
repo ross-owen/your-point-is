@@ -1,65 +1,85 @@
 <section id="vote-section" class="hidden">
-    <div class="card-wrapper">
-        <% cardDeck.forEach((c) => { %>
-            <div class="card">
-                <h2 class="card-title"><%= c %></h2>
-            </div>
-        <% }); %>
+  <div class="card-wrapper">
+    <% cardDeck.forEach((c) => { %>
+    <div class="card">
+      <h2 class="card-title"><%= c %></h2>
     </div>
+    <% }); %>
+  </div>
 
-    <% if (isOwner) { %>
-        <div class="owner-button">
-            <button id="collect-votes" class="btn btn-secondary btn-lg mt-4">Your Point Is?</button>
-        </div>
-    <% } %>
+  <% if (isOwner) { %>
+  <div class="owner-button">
+    <button id="collect-votes" class="btn btn-secondary btn-lg mt-4">
+      Your Point Is?
+    </button>
+  </div>
+  <div class="owner-button">
+    <button
+      id="refresh"
+      class="btn btn-secondary btn-lg mt-4"
+      onclick="refresh()"
+    >
+      Refresh
+    </button>
+  </div>
+  <% } %>
 </section>
 
 <script>
-  const cards = document.querySelectorAll(".card");
+  const cards = document.querySelectorAll('.card');
 
   cards.forEach((card) => {
-    card.addEventListener("click", () => {
-      const cardNumber = card.querySelector(".card-title").textContent;
+    card.addEventListener('click', () => {
+      const cardNumber = card.querySelector('.card-title').textContent;
 
       resetCards(cardNumber);
 
       let vote = cardNumber;
-      if (card.classList.contains("selectedCard")) {
+      if (card.classList.contains('selectedCard')) {
         vote = null;
       }
 
-      card.classList.toggle("selectedCard");
+      card.classList.toggle('selectedCard');
 
-      getSocket().emit("voting", {room: roomCode, vote: vote});
+      getSocket().emit('voting', { room: roomCode, vote: vote });
     });
   });
 
-  const collectVotesButton = document.getElementById("collect-votes");
+  const collectVotesButton = document.getElementById('collect-votes');
   if (collectVotesButton) {
-    collectVotesButton.addEventListener("click", () => {
+    collectVotesButton.addEventListener('click', () => {
       collectVotes();
     });
   }
 
   function showVote() {
     resetCards();
-    document.getElementById("vote-section").classList.remove("hidden");
+    document.getElementById('vote-section').classList.remove('hidden');
   }
 
   function hideVote() {
-    document.getElementById("vote-section").classList.add("hidden");
+    document.getElementById('vote-section').classList.add('hidden');
   }
 
   function resetCards(cardNumber) {
     for (const card of cards) {
-      if (!(cardNumber && card.querySelector(".card-title").textContent === cardNumber)) {
-        card.classList.remove("selectedCard");
+      if (
+        !(
+          cardNumber &&
+          card.querySelector('.card-title').textContent === cardNumber
+        )
+      ) {
+        card.classList.remove('selectedCard');
       }
     }
   }
 
   function collectVotes() {
     hideVote();
-    getSocket().emit("collect_votes", roomCode);
+    getSocket().emit('collect_votes', roomCode);
+  }
+
+  function refresh() {
+    getSocket().emit('new_round', roomCode);
   }
 </script>
