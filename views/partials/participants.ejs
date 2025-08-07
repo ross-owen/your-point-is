@@ -8,10 +8,13 @@
 </section>
 
 <script>
+  //function that updates list of participants. The list is stored in sever side and passed as a message via socket depending on the event (new user joined, user left, users waiting to enter the room, user voted, user to vote)
   function updateParticipants(receivedParticipants) {
     document.getElementById('participantStatus').classList.remove('hidden');
     let container = document.getElementById('containerParticipants');
     container.innerHTML = `<h4>Who's here?</h4>`;
+
+    //creating html that depending on the status of the user, different icons will be displayed.
     container.innerHTML += receivedParticipants
       .map(([name, status]) => {
         return `<div class='user'>
@@ -29,6 +32,7 @@
       .join('');
   }
 
+  //function to change user status. Not currently used as controlled at server side
   function updateVoteStatus(displayName, remove) {
     const voteIcon = document.querySelectorAll(
       `.${displayName.replace(/ /g, '')}`
@@ -50,6 +54,7 @@
     });
   }
 
+  //function to change user status. Not currently used as controlled at server side
   function resetVoteStatus() {
     const voteIcon1 = document.querySelectorAll('.unvoted');
     const voteIcon2 = document.querySelectorAll('.voted');

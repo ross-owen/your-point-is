@@ -12,22 +12,29 @@ async function getUserRooms(req, res) {
   res.json(rooms);
 }
 
+//function to create new room instance in db and redirect to room controller
 async function createRoom(req, res) {
   try {
     var codeFoundInDb = true;
     var room_code = '';
+    //generate a random code making sure it doesnt exist in the db yet
     while (codeFoundInDb) {
       room_code = Math.random().toString(36).substring(2, 7);
       codeFoundInDb = await validateCode(room_code);
     }
+
+    //new instance of room using Room model
     const newRoom = new Room({
       roomCode: room_code,
       ownerId: req.user.id,
       guests: [],
-      date: new Date()
+      date: new Date(),
     });
+
+    //store new room in db
     await newRoom.save();
     res.redirect(`/room/${room_code}`);
+    //handle exception
   } catch (error) {
     res.status(500).send('Failed to create room');
   }
