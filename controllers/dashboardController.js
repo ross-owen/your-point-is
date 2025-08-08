@@ -28,13 +28,21 @@ async function createRoom(req, res) {
       roomCode: room_code,
       ownerId: req.user.id,
       guests: [],
-      date: new Date(),
+      cardDeck: req.body.deck || 'fibonacci',
+      roomName: req.body.roomName || 'New Room',
+      date: new Date()
     });
 
     //store new room in db
     await newRoom.save();
-    res.redirect(`/room/${room_code}`);
-    //handle exception
+    //res.redirect(`/room/${room_code}`);
+    res.status(201).json({
+      roomCode: room_code,
+      roomName: newRoom.roomName,
+      date: newRoom.date,
+      cardDeck: newRoom.cardDeck, 
+      message: 'Room created successfully' 
+    });
   } catch (error) {
     res.status(500).send('Failed to create room');
   }

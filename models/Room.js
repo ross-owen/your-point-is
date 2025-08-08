@@ -5,6 +5,8 @@ const roomSchema = new mongoose.Schema({
     roomCode: String,
     ownerId: String,
     guests: Array,
+    cardDeck: String,
+    roomName: String,
     date : Date
 })
 
