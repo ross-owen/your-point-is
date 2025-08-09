@@ -7,6 +7,14 @@
     <% }); %>
   </div>
 
+  <!-- The button group allows for better formatting for the owner -->
+  <div class="button-group">
+  <div class="voter-button">
+    <button id="pass-vote" class="btn btn-secondary btn-lg mt-4">
+      Pass
+    </button>
+  </div>
+
   <% if (isOwner) { %>
   <div class="owner-button">
     <button id="collect-votes" class="btn btn-secondary btn-lg mt-4">
@@ -23,6 +31,7 @@
     </button>
   </div>
   <% } %>
+  </div>
 </section>
 
 <script>
@@ -44,6 +53,14 @@
       getSocket().emit('voting', { room: roomCode, vote: vote });
     });
   });
+
+
+  // When a user selects the button, they will set their status as passing
+  // the votes instead of participating in this vote
+  const passVoteButton = document.getElementById('pass-vote');
+  passVoteButton.addEventListener('click', () => {
+    passVote();
+  })
 
   const collectVotesButton = document.getElementById('collect-votes');
   if (collectVotesButton) {
@@ -72,6 +89,17 @@
         card.classList.remove('selectedCard');
       }
     }
+  }
+
+  function passVote() {
+    cards.forEach((card) => {
+      if (card.classList.contains('selectedCard')) {
+        card.classList.remove('selectedCard');
+      }
+    });
+    
+    let vote = null;
+    getSocket().emit('pass_vote', { room: roomCode, vote: vote });
   }
 
   function collectVotes() {

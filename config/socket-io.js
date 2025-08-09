@@ -208,6 +208,43 @@ module.exports = (httpServer, sessionMiddleware) => {
       });
     });
 
+    // listen for a pass vote
+    socket.on('pass_vote', async (data) => {
+      const { room, vote } = data;
+      const { userId, displayName } = socket.data;
+      const sessionId = socket.handshake.sessionID;
+      
+      let remove = true;
+      // set the status to voting temporarily to reset any voted cards
+      await saveVote(room, sessionId, displayName, vote);
+      io.roomParticipants.get(room).set(userId, 'passing');
+
+
+      // Prepare the updated list of participants for this room (using their display names)
+      const currentParticipantsInRoom = Array.from(
+        io.roomParticipants.get(room)
+      ).map(([participantId, status]) => {
+        // Try to resolve userId back to displayName from currently active sockets
+        // This relies on `socket.data` being set on a connected socket.
+        if (io.onlineUsers.has(participantId)) {
+          const firstSocketId = Array.from(
+            io.onlineUsers.get(participantId)
+          )[0];
+          const participantSocket = io.sockets.sockets.get(firstSocketId);
+          return participantSocket && participantSocket.data
+            ? [participantSocket.data.displayName, status]
+            : [participantId, status];
+        }
+        return [participantId, status]; // Fallback
+      });
+
+      io.to(room).emit('user_voted', {
+        displayName: displayName,
+        remove: remove,
+        participants: currentParticipantsInRoom,
+      });
+    });
+
     // listen for collect votes
     socket.on('collect_votes', async (room) => {
       console.log(`Collecting votes for room "${room}"`);

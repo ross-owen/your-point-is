@@ -14,6 +14,14 @@
   grid-template-columns: 2fr 15fr 2fr;
 }
 
+.button-group {
+  display: flex;
+
+  div {
+    margin: auto;
+  }
+}
+
 @media only screen and (max-width: 768px) {
   .room {
     display: grid;
