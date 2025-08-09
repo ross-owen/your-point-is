@@ -14,19 +14,24 @@
     let container = document.getElementById('containerParticipants');
     container.innerHTML = `<h4>Who's here?</h4>`;
 
+    // A map of all possible status for ease in editing and adding new statuses
+    const statusMap = {
+      waiting: { emoji: '🍕', class: 'waiting' },
+      unvoted: { emoji: '❔', class: 'unvoted' },
+      voted: { emoji: '✅', class: 'voted' },
+      passing: { emoji: '👁️', class: 'passing' },
+      default: { emoji: '❔', class: 'unvoted' }
+    };
+
     //creating html that depending on the status of the user, different icons will be displayed.
     container.innerHTML += receivedParticipants
       .map(([name, status]) => {
+        const { emoji, class: statusClass } = statusMap[status] || statusMap.default;
+        const html = `<p class='${name.replace(/ /g, '')} ${statusClass}''>${emoji}<p>`;
         return `<div class='user'>
     <img src="/images/site/user.png" alt="user-icon" />
     <p>${name}</p>
-    ${
-      status === 'waiting'
-        ? `<p class='${name.replace(/ /g, '')} waiting'>🍕</p>`
-        : status === 'voting'
-        ? `<p class='${name.replace(/ /g, '')} unvoted'>❔</p>`
-        : `<p class='${name.replace(/ /g, '')} voted'>✅</p>`
-    }
+    ${html}
   </div>`;
       })
       .join('');

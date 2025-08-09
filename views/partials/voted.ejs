@@ -1,5 +1,5 @@
 <section id="voted-section" class="hidden">
-    <h2>All votes are in for an average of: <span id="average-vote"></span></h2>
+    <h2 id="votedMessage">All votes are in for an average of: <span id="average-vote"></span></h2>
 
     <div id="pieChart">
         <canvas id="myChart"></canvas>
@@ -11,9 +11,12 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
     <% if (isOwner) { %>
+      <!-- The button group allows for better formatting for the owner -->
+      <div class="button-group">
         <div class="owner-button">
             <button id="new-round-button" class="btn btn-secondary btn-lg mt-4">Start a New Round</button>
         </div>
+      </div>
     <% } %>
 </section>
 

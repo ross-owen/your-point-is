@@ -40,12 +40,18 @@
   border: 4px solid black;
 }
 
+/* Center the message in the voted state */
+#votedMessage {
+  text-align: center;
+}
 
 #pieChart {
-  max-width: 600px;
+  min-width: 250px;
+  width: 80%;
+  max-width: 400px;
   padding: auto;
   margin: auto;
-
+}
 
 .voted-card h2 {
   font-size: 3em;
