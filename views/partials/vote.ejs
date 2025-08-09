@@ -76,6 +76,7 @@
 
   function collectVotes() {
     hideVote();
+    hideWaiting();
     getSocket().emit('collect_votes', roomCode);
   }
 
