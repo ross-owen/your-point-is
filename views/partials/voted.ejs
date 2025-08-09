@@ -104,6 +104,7 @@
 
   function newRound() {
     hideVoted();
+    hideWaiting();
     getSocket().emit("new_round", roomCode);
   }
 

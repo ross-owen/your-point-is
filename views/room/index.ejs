@@ -31,7 +31,13 @@
       socket.on('room_joined_confirmation', (confirmation) => {
         hideJoin();
 
-        showWaiting();
+        const pizzaWrapper = document.getElementById('imagepizzawrapper');
+        // Adding this class as a flag to ensure the waiting page does not load
+        // if the connection is lost and reconnected
+        if (!pizzaWrapper.classList.contains("loaded")) {
+          pizzaWrapper.classList.add("loaded");
+          showWaiting();
+        }
       });
 
       socket.on('started_new_round', (data) => {
