@@ -5,9 +5,38 @@
     <div class="border rounded shadow-sm p-4 mx-auto">
         <div class="your-rooms d-flex justify-content-between align-items-center mb-4">
           <h3 class="h5 text-muted mb-3">Your Rooms</h3>
-          <form action="/dashboard/" method="POST">
-            <button type="submit" class="btn btn-outline-primary btn-lg">Create a Room</button>
-          </form>
+          <button type="button" class="btn btn-outline-primary btn-lg" data-bs-toggle="modal" data-bs-target="#createRoom">Create a Room</button>
+        </div>
+        <div class="modal fade" id="createRoom" tabindex="-1" aria-labelledby="createRoomLabel">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form id="roomCreationForm">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="createRoomLabel">Create new Room</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label for="roomName" class="form-label">Room Name</label>
+                    <input type="text" class="form-control" id="roomName" name="roomName" placeholder="Enter room name" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="deck" class="form-label">Select Card Deck</label>
+                    <select class="form-select" name="deck" id="deck">
+                      <option value="fibonacci" selected>Fibonacci</option>
+                      <option value="scrum">Scrum</option>
+                      <option value="t_shirt">T-Shirt Sizes</option>
+                      <option value="power_of_two">Power of Two</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">Create Room</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
         <ul class="list-group list-gruop-flush roomsList"></ul>
     </div>
@@ -21,41 +50,7 @@
         const roomsUl = document.querySelector('.roomsList');
         roomsUl.innerHTML = '';
         if (data.length > 0) {
-          data.forEach((room) => {
-            const div = document.createElement('div');
-            const date = new Date(room.date);
-            const button = document.createElement('button');
-            button.className = 'btn btn-outline-danger btn-sm ms-3';
-            button.title = 'Click to delete this room';
-            button.textContent = '🗑️';
-            button.addEventListener('click', async (e) => {
-              e.preventDefault();
-              const response = await fetch(`/api/room/${room.roomCode}`, {method: 'DELETE'});
-              if (response.ok) {
-                showAlert('✅ Room deleted successfully!', 'success');
-                const roomelement = button.closest('.room-link');
-                if (roomelement) {
-                  roomelement.remove();
-                }
-              } else {
-                showAlert('❌ Failed to delete room.', 'danger');
-              }          
-            })
-
-            div.textContent = `Created: ${date.toLocaleString()}`;
-            div.className = 'roomDate text-muted me-1';
-
-            div.appendChild(button);
-
-            const roomLink = document.createElement('a');
-            roomLink.href = `/room/${room.roomCode}`;
-            roomLink.className = 'room-link text-decoration-none list-group-item list-group-item-action w-100 d-flex justify-content-between align-items-center me-1';
-            roomLink.textContent = `Room Code: ${room.roomCode}`;
-
-            roomLink.appendChild(div);
-            roomsUl.appendChild(roomLink);
-          
-          });
+          data.forEach((room) => renderRoom(room));
         } else {
           const li = document.createElement('li');
           li.className = 'list-group-item text-center text-muted';
@@ -63,4 +58,74 @@
           roomsUl.appendChild(li);
         }
       });
+
+  const creationForm = document.getElementById('roomCreationForm');
+  creationForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const roomName = document.getElementById('roomName').value;
+    const deck = document.getElementById('deck').value;
+
+    const response = await fetch('/dashboard/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ roomName, deck})
+    })
+
+    bootstrap.Modal.getInstance(document.getElementById('createRoom')).hide();
+    e.target.reset();
+
+    if (response.status === 201) {
+      const data = await response.json();
+      renderRoom(data, true);
+      showAlert(`✅ Room "${data.roomName}" created successfully!`, 'success');
+    } else {
+      const error = await response.text();
+      showAlert(`❌ Failed to create room: ${error}`, 'danger');
+    }
+  });
+
+  function renderRoom(room, appendatTop = false) {
+    const roomsUl = document.querySelector('.roomsList');
+    const div = document.createElement('div');
+    const date = new Date(room.date);
+
+    const button = document.createElement('button');
+    button.className = 'btn btn-outline-danger btn-sm ms-3';
+    button.title = 'Click to delete this room';
+    button.textContent = '🗑️';
+    button.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const response = await fetch(`/api/room/${room.roomCode}`, {method: 'DELETE'});
+      if (response.ok) {
+        showAlert('✅ Room deleted successfully!', 'success');
+        const roomelement = button.closest('.room-link');
+        if (roomelement) {
+          roomelement.remove();
+        }
+      } else {
+        showAlert('❌ Failed to delete room.', 'danger');
+      }          
+    })
+
+    div.textContent = `Created: ${date.toLocaleString()}`;
+    div.className = 'roomDate text-muted me-1';
+
+    div.appendChild(button);
+
+    const roomLink = document.createElement('a');
+    roomLink.href = `/room/${room.roomCode}`;
+    roomLink.className = 'room-link text-decoration-none list-group-item list-group-item-action w-100 d-flex justify-content-between align-items-center me-1';
+    roomLink.textContent = `${room.roomName}    (${room.cardDeck})`;
+
+    roomLink.appendChild(div);
+    if (!appendatTop) {
+      roomsUl.appendChild(roomLink);
+    } else {
+      roomsUl.prepend(roomLink);
+    }
+    
+  }
 </script>
