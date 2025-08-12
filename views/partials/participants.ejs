@@ -27,7 +27,7 @@
     container.innerHTML += receivedParticipants
       .map(([name, status]) => {
         const { emoji, class: statusClass } = statusMap[status] || statusMap.default;
-        const html = `<p class='${name.replace(/ /g, '')} ${statusClass}''>${emoji}<p>`;
+        const html = `<p class='${name.replace(/ /g, '')} ${statusClass}''>${changeEmoji(statusClass)}<p>`;
         return `<div class='user'>
     <img src="/images/site/user.png" alt="user-icon" />
     <p>${name}</p>
@@ -35,6 +35,21 @@
   </div>`;
       })
       .join('');
+  }
+
+  function changeEmoji(status) {
+    // This takes in the status name as the input and outputs the proper emoji
+    // to go with it
+
+    // An emoji map for available voting options
+    const emojiMap = {
+      "1" : "1️⃣", "2" : "2️⃣", "3" : "3️⃣", "5" : "5️⃣", "8" : "8️⃣", "13": "1️⃣3️⃣", null : "❔",
+      "0" : "0️⃣", "1/2" : "1️⃣↙️2️⃣", "XXS" : "", "XS" : "", "S" : "", "M" : "", "L" : "", "XL" : "XXL",
+      "4" : "4️⃣", "16" : "1️⃣6️⃣", "32" : "3️⃣2️⃣", "64" : "6️⃣4️⃣", "waiting" : "🍕", 
+      "unvoted" : "❔", "voted" : "✅", "passing" : "👁️", "default" : "❔"
+    }
+
+    return emojiMap[status];
   }
 
   //function to change user status. Not currently used as controlled at server side

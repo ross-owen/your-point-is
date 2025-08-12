@@ -35,6 +35,8 @@
 
     countCards(votes);
 
+    // setStatus(votes);
+
     const section = document.getElementById("voted-section");
     if (section) {
       section.classList.remove("hidden");
@@ -70,6 +72,8 @@
     const cardVoteSummary = {};
 
     voteCounts.forEach(vote => {
+
+
       if (!cardVoteSummary[vote.card]) {
         cardVoteSummary[vote.card] = {
           count: 0,

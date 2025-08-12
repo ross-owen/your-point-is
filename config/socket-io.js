@@ -170,9 +170,6 @@ module.exports = (httpServer, sessionMiddleware) => {
       const { userId, displayName } = socket.data;
       const sessionId = socket.handshake.sessionID;
 
-      console.log(
-        `${displayName} voted a ${vote} in room ${room} using session ${sessionId} and userId ${userId}"`
-      );
       await saveVote(room, sessionId, displayName, vote);
 
       let remove = true;
@@ -247,9 +244,7 @@ module.exports = (httpServer, sessionMiddleware) => {
 
     // listen for collect votes
     socket.on('collect_votes', async (room) => {
-      console.log(`Collecting votes for room "${room}"`);
       const votes = await getVotes(room);
-      console.log(votes);
       for (const [userId] of io.roomParticipants.get(room)) {
         io.roomParticipants.get(room).set(userId, 'voting');
       }
