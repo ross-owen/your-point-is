@@ -15,12 +15,21 @@
   box-sizing: border-box;
 }
 
+/* Light mode styles (default) */
 body
 {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
   font-family: "Jost", sans-serif !important;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #333333;
+    color: #ffffff;
+  }
 }
 
 .hidden {

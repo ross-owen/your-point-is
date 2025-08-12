@@ -2,6 +2,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   grid-gap: 1.25rem;
+  justify-items: center;
 }
 
 .card {
@@ -49,13 +50,5 @@
   min-width: 250px;
   width: 80%;
   max-width: 400px;
-  padding: auto;
   margin: auto;
 }
-
-.voted-card h2 {
-  font-size: 3em;
-  color: #114693;
-  text-shadow: 1px 1px 1px #fff, -1px -1px 1px #888;
-}
-
