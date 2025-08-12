@@ -9,34 +9,25 @@
 
   <!-- The button group allows for better formatting for the owner -->
   <div class="button-group">
-  <div class="voter-button">
-    <button id="pass-vote" class="btn btn-secondary btn-lg mt-4">
-      Pass
-    </button>
-  </div>
+    <div class="voter-button">
+      <button id="pass-vote" class="btn btn-secondary btn-lg mt-4">Pass</button>
+    </div>
 
-  <% if (isOwner) { %>
-  <div class="owner-button">
-    <button id="collect-votes" class="btn btn-secondary btn-lg mt-4">
-      Your Point Is?
-    </button>
-  </div>
-  <div class="owner-button">
-    <button
-      id="refresh"
-      class="btn btn-secondary btn-lg mt-4"
-      onclick="refresh()"
-    >
-      Refresh
-    </button>
-  </div>
-  <% } %>
+    <% if (isOwner) { %>
+    <div class="owner-button">
+      <button id="collect-votes" class="btn btn-secondary btn-lg mt-4">Your Point Is?</button>
+    </div>
+    <div class="owner-button">
+      <button id="refresh" class="btn btn-secondary btn-lg mt-4" onclick="refresh()">Refresh</button>
+    </div>
+    <% } %>
   </div>
 </section>
 
 <script>
   const cards = document.querySelectorAll('.card');
 
+  // set the click event on each card to "select" the card and to tell socket.io the vote
   cards.forEach((card) => {
     card.addEventListener('click', () => {
       const cardNumber = card.querySelector('.card-title').textContent;
@@ -69,11 +60,13 @@
     });
   }
 
+  // called from room/index.ejs
   function showVote() {
     resetCards();
     document.getElementById('vote-section').classList.remove('hidden');
   }
 
+  // called from room/index.ejs
   function hideVote() {
     document.getElementById('vote-section').classList.add('hidden');
   }
@@ -91,6 +84,7 @@
     }
   }
 
+  // handle when a voter elects to "pass" instead of vote
   function passVote() {
     cards.forEach((card) => {
       if (card.classList.contains('selectedCard')) {
@@ -102,12 +96,14 @@
     getSocket().emit('pass_vote', { room: roomCode, vote: vote });
   }
 
+  // called by the host to collect the votes and show the pie chart
   function collectVotes() {
     hideVote();
     hideWaiting();
     getSocket().emit('collect_votes', roomCode);
   }
 
+  // used by the host if someone is in the waiting room, and they want to reset the votes to allow new voters into the room
   function refresh() {
     getSocket().emit('new_round', roomCode);
   }

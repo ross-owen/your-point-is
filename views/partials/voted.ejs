@@ -29,6 +29,7 @@
     });
   }
 
+  // called from room/index.ejs
   function showVoted(votes) {
 
     resetVotedCards();
@@ -41,6 +42,7 @@
     }
   }
 
+  // called from room/index.ejs
   function hideVoted() {
     resetVotedCards();
 
@@ -65,7 +67,9 @@
   // define myChart as global for global access to delete
   let myChart;
 
-
+  // loops through all the cards
+  // counts how many people voted for that card
+  // sums the values of the cards and calculates the average
   function countCards(voteCounts) {
     const cardVoteSummary = {};
 
@@ -87,6 +91,8 @@
     let sum = 0;
     let voterCount = 0;
 
+    // get the average
+    // handle ½ card since it's NaN, but is actually 0.5
     for (const card in cardVoteSummary) {
       if (cardVoteSummary.hasOwnProperty(card)) {
         const summary = cardVoteSummary[card];
@@ -126,7 +132,8 @@
       myChart.destroy();
     }
 
-// Create the empty list for ease of inserting data
+    // create three arrays. one for the labels, one for the card (how many times it was voted) and the voter names
+    // they will always be the same size, so we can use the index to retrieve each one
     let labelList = [];
     let cardCount = [];
     let voterNames = [];
@@ -137,12 +144,12 @@
         if (item !== "?") {
           labelList.push(item);
           cardCount.push(card.count);
-          voterNames.push(card.names.join(", "));
+          voterNames.push(card.names.join(", ")); // combine all the voter names into a single string to use for hover
         }
       }
     }
 
-// Creates the new chart
+    // Creates the new chart
     Chart.register(ChartDataLabels);
 
     myChart = new Chart(ctx, {
