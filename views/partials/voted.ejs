@@ -91,9 +91,11 @@
       if (cardVoteSummary.hasOwnProperty(card)) {
         const summary = cardVoteSummary[card];
 
-
         if (!isNaN(card)) {
           sum += (Number(card) * summary.count);
+          voterCount += summary.count;
+        } else if (card === "½") {
+          sum += (0.5 * summary.count);
           voterCount += summary.count;
         }
       }
