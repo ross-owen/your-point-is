@@ -30,6 +30,27 @@ body
     background-color: #333333;
     color: #ffffff;
   }
+  /* This targets the modal content, header, and footer */
+  .modal-content,
+  .modal-header,
+  .modal-footer,
+  .form-select {
+    background-color: #212529; /* A dark Bootstrap background color */
+    color: #f8f9fa; /* A light Bootstrap text color */
+    border-color: #495057; /* A slightly lighter border for contrast */
+  }
+
+  /* This ensures the close button is visible */
+  .modal-header .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+  }
+
+  /* This styles any form inputs inside the modal */
+  .modal-body .form-control {
+    background-color: #343a40;
+    color: #f8f9fa;
+    border-color: #495057;
+  }
 }
 
 .hidden {

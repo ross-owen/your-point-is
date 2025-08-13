@@ -12,13 +12,20 @@
       function setTheme() {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const body = document.querySelector('body');
+        const modalDialog = document.getElementById('createRoom');
 
         if (prefersDark) {
           body.classList.remove('bg-light');
           body.classList.add('bg-dark');
+          if (modalDialog) {
+            modalDialog.setAttribute('data-bs-theme', 'dark');
+          }
         } else {
           body.classList.remove('bg-dark');
           body.classList.add('bg-light');
+          if (modalDialog) {
+            modalDialog.removeAttribute('data-bs-theme');
+          }
         }
       }
       setTheme();
