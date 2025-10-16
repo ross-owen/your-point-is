@@ -22,6 +22,9 @@ module.exports = (httpServer, sessionMiddleware) => {
     if (!io.roomParticipants) {
         io.roomParticipants = new Map();
     }
+    if (!io.roomState) {
+        io.roomState = new Map();
+    }
 
     io.on('connection', (socket) => {
         console.log(
@@ -111,6 +114,19 @@ module.exports = (httpServer, sessionMiddleware) => {
                     return [participantId, status]; // Fallback
                 });
 
+                const currentRoomState = io.roomState.get(roomName);
+
+                if (currentRoomState === 'voting') {
+                    // Put the new joiner directly into the voting state
+                    io.roomParticipants.get(roomName).set(userId, 'voting');
+
+                    // Optionally tell the client to render the voting UI immediately
+                    socket.emit('enter_voting_state', {
+                        room: roomName,
+                        message: 'Voting is currently in progress. You’ve joined mid-round.',
+                    });
+                }
+
                 // Broadcast to all clients in the room (including the sender) about the join
                 io.to(roomName).emit('participants', {
                     message: `${displayName} has joined ${roomName}.`,
@@ -127,6 +143,8 @@ module.exports = (httpServer, sessionMiddleware) => {
 
         // listen for a new round request from the room owner
         socket.on('new_round', (room) => {
+            io.roomState.set(room, 'voting');
+            
             const {userId, displayName} = socket.data;
 
             console.log(
@@ -266,6 +284,7 @@ module.exports = (httpServer, sessionMiddleware) => {
 
         // listen for collect votes
         socket.on('collect_votes', async (room) => {
+            io.roomState.set(room, 'revealing');
             console.log(`Collecting votes for room "${room}"`);
             const votes = await getVotes(room);
             console.log(votes);
