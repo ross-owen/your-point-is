@@ -121,7 +121,7 @@ module.exports = (httpServer, sessionMiddleware) => {
                     // Put the new joiner directly into the voting state
                     io.roomParticipants.get(roomName).set(userId, 'voting');
 
-                    io.to(room).emit('started_new_round', {
+                    io.to(roomName).emit('started_new_round', {
                         sender: displayName,
                         userId: userId,
                         room: roomName,
