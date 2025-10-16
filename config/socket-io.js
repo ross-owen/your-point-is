@@ -115,15 +115,17 @@ module.exports = (httpServer, sessionMiddleware) => {
                 });
 
                 const currentRoomState = io.roomState.get(roomName);
+                console.log('current room state: ' + currentRoomState);
 
                 if (currentRoomState === 'voting') {
                     // Put the new joiner directly into the voting state
                     io.roomParticipants.get(roomName).set(userId, 'voting');
 
-                    // Optionally tell the client to render the voting UI immediately
-                    socket.emit('enter_voting_state', {
+                    io.to(room).emit('started_new_round', {
+                        sender: displayName,
+                        userId: userId,
                         room: roomName,
-                        message: 'Voting is currently in progress. You’ve joined mid-round.',
+                        participants: currentParticipantsInRoom,
                     });
                 }
 
